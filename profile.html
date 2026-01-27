@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Anthony | Monarch Hair Club</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    /* --- CORE VARIABLES --- */
+    :root {
+      --bg-body: #0a0a0a;
+      --bg-card: #141414;
+      --text-main: #ffffff;
+      --text-muted: #a1a1aa;
+      --accent: #ef4444; /* Neon Red */
+      --gold: #D4AF37; /* Gold from PDF Logo */
+      --border: rgba(255, 255, 255, 0.1);
+      --font-body: 'Inter', sans-serif;
+    }
+
+    /* --- RESET --- */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg-body);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      line-height: 1.5;
+      max-width: 480px; margin: 0 auto; /* App-like width */
+      min-height: 100vh; position: relative;
+      border-left: 1px solid #111; border-right: 1px solid #111;
+    }
+
+    /* --- NAVIGATION --- */
+    .top-nav {
+      position: absolute; top: 0; width: 100%; padding: 20px; z-index: 50;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .back-link {
+      color: white; font-size: 11px; font-weight: 800; text-transform: uppercase; 
+      text-decoration: none; display: flex; align-items: center; gap: 4px;
+      background: rgba(0,0,0,0.5); padding: 8px 12px; border-radius: 50px;
+      backdrop-filter: blur(4px); border: 1px solid var(--border);
+    }
+    
+    /* --- HERO PROFILE --- */
+    .profile-hero {
+      padding-top: 80px; text-align: center;
+      background: linear-gradient(to bottom, #1a1a1a 0%, var(--bg-body) 100%);
+      padding-bottom: 30px; border-bottom: 1px solid var(--border);
+    }
+    
+    .avatar-container {
+      position: relative; width: 140px; height: 140px; margin: 0 auto 20px;
+    }
+    .avatar-ring {
+      position: absolute; inset: -4px; border-radius: 50%;
+      border: 2px solid var(--gold); /* Gold Border like PDF */
+      animation: spin 10s linear infinite; opacity: 0.5;
+    }
+    .avatar-img {
+      width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
+      border: 4px solid var(--bg-body); position: relative; z-index: 2;
+    }
+    
+    h1 { font-size: 32px; font-weight: 900; text-transform: uppercase; letter-spacing: -0.02em; margin-bottom: 4px; }
+    .role-badge { 
+      display: inline-block; background: rgba(212, 175, 55, 0.15); color: var(--gold);
+      font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em;
+      padding: 6px 12px; border-radius: 4px; margin-bottom: 20px; border: 1px solid rgba(212, 175, 55, 0.3);
+    }
+
+    /* --- BIO SECTION --- */
+    .bio-box { padding: 0 24px; margin-bottom: 30px; }
+    .bio-text { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+
+    /* --- LINKTREE GRID --- */
+    .action-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; padding: 0 20px; margin-bottom: 40px;
+    }
+    .action-btn {
+      background: var(--bg-card); border: 1px solid var(--border);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 20px 10px; border-radius: 12px; text-decoration: none; color: white;
+      transition: 0.2s;
+    }
+    .action-btn:hover { border-color: var(--gold); background: #1a1a1a; transform: translateY(-2px); }
+    .action-icon { margin-bottom: 8px; color: var(--text-muted); }
+    .action-btn:hover .action-icon { color: var(--gold); }
+    .action-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* Primary Book Button */
+    .book-btn-lg {
+      grid-column: span 3; background: var(--gold); color: black; border: none;
+      padding: 16px; font-size: 14px; font-weight: 900; text-transform: uppercase;
+      letter-spacing: 0.05em; display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .book-btn-lg:hover { background: white; border-color: white; transform: translateY(-2px); }
+
+    /* --- SHOWCASE --- */
+    .showcase-section { padding: 0 20px 40px; }
+    .section-head { 
+      font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; 
+      letter-spacing: 0.1em; margin-bottom: 16px; display: block; text-align: center;
+    }
+    
+    .gallery-scroll {
+      display: flex; gap: 10px; overflow-x: auto; padding-bottom: 20px;
+      scrollbar-width: none;
+    }
+    .gallery-item {
+      min-width: 200px; aspect-ratio: 4/5; border-radius: 8px; overflow: hidden;
+      border: 1px solid var(--border); position: relative;
+    }
+    .gallery-img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); transition: 0.4s; }
+    .gallery-item:hover .gallery-img { filter: grayscale(0%); transform: scale(1.05); }
+
+    /* --- BRAND FOOTER --- */
+    .powered-by {
+      text-align: center; padding: 40px 0; border-top: 1px solid var(--border);
+      margin-top: 20px; color: var(--text-muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em;
+    }
+    .powered-by span { color: white; font-weight: 800; }
+
+  </style>
+</head>
+<body>
+
+  <nav class="top-nav">
+    <a href="team.html" class="back-link">
+      <i data-lucide="arrow-left" style="width:12px"></i> Back
+    </a>
+    <img src="https://i.imgur.com/your-logo.png" style="height: 24px; opacity: 0.8;" alt="Monarch Logo"> </nav>
+
+  <header class="profile-hero">
+    <div class="avatar-container">
+      <div class="avatar-ring"></div>
+      <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&q=80&w=400" class="avatar-img" alt="Anthony">
+    </div>
+    
+    <h1>Anthony</h1>
+    <span class="role-badge">Owner / Master Barber</span>
+    
+    <div class="bio-box">
+      <p class="bio-text">
+        [span_0](start_span)Founder of Monarch Hair Club[span_0](end_span). [span_1](start_span)Built a space where clients feel at home, confident, and cared for[span_1](end_span). 
+        [span_2](start_span)Setting the standard for precision since 2021[span_2](end_span).
+      </p>
+    </div>
+  </header>
+
+  <div class="action-grid">
+    <button class="action-btn book-btn-lg" onclick="openBooking()">
+      Book Appointment
+    </button>
+    
+    <a href="#" class="action-btn">
+      <i data-lucide="instagram" class="action-icon"></i>
+      <span class="action-label">Instagram</span>
+    </a>
+    <a href="#" class="action-btn">
+      <i data-lucide="scissors" class="action-icon"></i>
+      <span class="action-label">TheCut</span>
+    </a>
+    <a href="#" class="action-btn">
+      <i data-lucide="phone" class="action-icon"></i>
+      <span class="action-label">Contact</span>
+    </a>
+  </div>
+
+  <div class="showcase-section">
+    <span class="section-head">The Showcase</span>
+    <div class="gallery-scroll">
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=400" class="gallery-img">
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=400" class="gallery-img">
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1534304332490-e222d0d4b0ab?w=400" class="gallery-img">
+      </div>
+       <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1503951914875-befbb711ed3e?w=400" class="gallery-img">
+      </div>
+    </div>
+  </div>
+
+  <div class="powered-by">
+    Powered by <span>Monarch Hair Club</span>
+  </div>
+
+  <script>
+    lucide.createIcons();
+    // Universal Booking Widget Trigger
+    function openBooking() { console.log("Open Widget"); }
+  </script>
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Monarch Hair Club — Net Studio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    /* --- CORE VARIABLES --- */
+    :root {
+      --bg-body: #0a0a0a;
+      --bg-card: #141414;
+      --text-main: #ffffff;
+      --text-muted: #a1a1aa;
+      --accent: #ef4444; /* Bright Red */
+      --border: rgba(255, 255, 255, 0.1);
+      --font-body: 'Inter', sans-serif;
+    }
+
+    /* --- RESET --- */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg-body);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      line-height: 1.5;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* --- TYPOGRAPHY --- */
+    h1 { font-size: clamp(40px, 8vw, 64px); font-weight: 900; line-height: 0.95; letter-spacing: -0.04em; text-transform: uppercase; margin-bottom: 24px; }
+    h2 { font-size: 32px; font-weight: 800; text-transform: uppercase; letter-spacing: -0.02em; margin-bottom: 16px; }
+    .tagline { color: var(--accent); font-weight: 800; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; display: block; margin-bottom: 12px; }
+
+    /* --- UTILITIES --- */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+    .section-pad { padding: 80px 0; }
+    .btn {
+      display: inline-flex; background: var(--accent); color: white;
+      padding: 14px 28px; font-weight: 700; text-transform: uppercase; font-size: 12px;
+      letter-spacing: 0.05em; text-decoration: none; border-radius: 4px; /* Sharp corners */
+      transition: 0.2s; border: none; cursor: pointer;
+    }
+    .btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+    .btn.outline { background: transparent; border: 1px solid var(--border); }
+    .btn.outline:hover { border-color: white; }
+
+    /* --- NAVIGATION --- */
+    nav {
+      position: absolute; top: 0; width: 100%; padding: 30px 24px; z-index: 50;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .brand { font-weight: 900; font-size: 20px; letter-spacing: -0.05em; font-style: italic; }
+    
+    /* --- HERO --- */
+    .hero {
+      min-height: 85vh; display: flex; align-items: center;
+      background: linear-gradient(to right, rgba(0,0,0,0.8), rgba(0,0,0,0.4)),
+                  url('https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&q=80&w=2000');
+      background-size: cover; background-position: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .hero-content { max-width: 600px; }
+
+    /* --- SERVICES GRID --- */
+    .svc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-top: 40px; }
+    .svc-card {
+      background: var(--bg-card); border: 1px solid var(--border); padding: 30px;
+      transition: 0.2s;
+    }
+    .svc-card:hover { border-color: var(--accent); }
+    .svc-icon { color: var(--accent); margin-bottom: 16px; width: 28px; height: 28px; }
+
+    /* --- THE SQUAD (Horizontal Scroll) --- */
+    .squad-section { background: #000; overflow: hidden; }
+    .squad-scroll {
+      display: flex; gap: 30px; overflow-x: auto; padding-bottom: 20px;
+      scrollbar-width: none; /* Hide scrollbar */
+    }
+    .squad-card { min-width: 180px; text-align: center; }
+    .squad-img {
+      width: 140px; height: 140px; border-radius: 50%; object-fit: cover;
+      border: 3px solid var(--bg-card); margin: 0 auto 16px;
+      transition: 0.3s;
+    }
+    .squad-card:hover .squad-img { border-color: var(--accent); transform: scale(1.05); }
+    .handle { color: var(--accent); font-size: 11px; font-weight: 700; text-transform: uppercase; margin-top: 4px; }
+
+    /* --- WHY US (List) --- */
+    .why-row { display: flex; gap: 20px; margin-bottom: 30px; }
+    .why-num { font-size: 32px; font-weight: 900; color: #333; line-height: 1; }
+    
+    /* --- FOOTER --- */
+    footer { border-top: 1px solid var(--border); padding: 40px 0; text-align: center; color: var(--text-muted); font-size: 12px; }
+
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="brand">MONARCH</div>
+    <a href="#book" class="btn" style="padding: 10px 20px; font-size: 11px;">Book Now</a>
+  </nav>
+
+  <header class="hero">
+    <div class="container hero-content">
+      <span class="tagline">Norfolk's Premier Studio</span>
+      <h1>Premium Cuts.<br>Fair Prices.</h1>
+      <p style="color:var(--text-muted); font-size:18px; margin-bottom:32px; max-width:400px;">
+        Top-tier fades, tapers, and lineups in the heart of Hampton Roads. Minutes from ODU.
+      </p>
+      <div style="display:flex; gap:16px;">
+        <a href="#book" class="btn">Book Now</a>
+        <a href="#services" class="btn outline">View Menu</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="container section-pad" id="services">
+    <span class="tagline">What We Do</span>
+    <h2>Precision Grooming</h2>
+    <div class="svc-grid">
+      <div class="svc-card">
+        <i data-lucide="scissors" class="svc-icon"></i>
+        <h3 style="font-size:16px; font-weight:700; margin-bottom:8px;">Haircuts</h3>
+        <p style="font-size:13px; color:var(--text-muted);">Clean fades, tapers, and classic cuts tailored to your style.</p>
+      </div>
+      <div class="svc-card">
+        <i data-lucide="user" class="svc-icon"></i>
+        <h3 style="font-size:16px; font-weight:700; margin-bottom:8px;">Beard Trim</h3>
+        <p style="font-size:13px; color:var(--text-muted);">Sharp lineups, shaping, and detailed grooming.</p>
+      </div>
+      <div class="svc-card">
+        <i data-lucide="zap" class="svc-icon"></i>
+        <h3 style="font-size:16px; font-weight:700; margin-bottom:8px;">Hot Towel</h3>
+        <p style="font-size:13px; color:var(--text-muted);">Traditional shave experience using precision technique.</p>
+      </div>
+      <div class="svc-card">
+        <i data-lucide="smile" class="svc-icon"></i>
+        <h3 style="font-size:16px; font-weight:700; margin-bottom:8px;">Kids' Cuts</h3>
+        <p style="font-size:13px; color:var(--text-muted);">Comfortable and professional cuts for young clients.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-pad squad-section">
+    <div class="container">
+      <span class="tagline">Meet The Team</span>
+      <h2 style="margin-bottom:40px;">The Squad</h2>
+      
+      <div class="squad-scroll">
+        <div class="squad-card">
+          <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=400" class="squad-img">
+          <div style="font-weight:700; font-size:14px;">The Surgeon</div>
+          <div class="handle">@BARBERSURGEN</div>
+        </div>
+        <div class="squad-card">
+          <img src="https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=400" class="squad-img">
+          <div style="font-weight:700; font-size:14px;">Azzie</div>
+          <div class="handle">@AZZIETHEBARBER</div>
+        </div>
+        <div class="squad-card">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400" class="squad-img">
+          <div style="font-weight:700; font-size:14px;">Twice</div>
+          <div class="handle">@TWICETHEBARBER</div>
+        </div>
+        <div class="squad-card">
+          <img src="https://images.unsplash.com/photo-1583336130417-3346a1be7dee?w=400" class="squad-img">
+          <div style="font-weight:700; font-size:14px;">Joss</div>
+          <div class="handle">@LOVEJOSS_</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container section-pad">
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:60px;">
+      
+      <div>
+        <span class="tagline">Why Monarch</span>
+        <h2 style="margin-bottom:40px;">The Top Choice</h2>
+        
+        <div class="why-row">
+          <div class="why-num">01</div>
+          <div>
+            <h4 style="font-weight:700; margin-bottom:4px;">Affordable Prices</h4>
+            <p style="font-size:13px; color:var(--text-muted);">Unbeatable prices without sacrificing quality.</p>
+          </div>
+        </div>
+        <div class="why-row">
+          <div class="why-num">02</div>
+          <div>
+            <h4 style="font-weight:700; margin-bottom:4px;">Pro Barbers</h4>
+            <p style="font-size:13px; color:var(--text-muted);">Skilled team known for precision and speed.</p>
+          </div>
+        </div>
+        <div class="why-row">
+          <div class="why-num">03</div>
+          <div>
+            <h4 style="font-weight:700; margin-bottom:4px;">Custom Service</h4>
+            <p style="font-size:13px; color:var(--text-muted);">Tailored to your specific style and preference.</p>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <span class="tagline">Visit Us</span>
+        <h2>Norfolk, VA</h2>
+        <p style="color:var(--text-muted); margin-bottom:20px;">
+          3510 Colley Ave, Norfolk, VA 23508<br>
+          (757) 581-4490
+        </p>
+        <div style="width:100%; height:300px; background:#222; border:1px solid var(--border); border-radius:12px; overflow:hidden; filter:grayscale(100%);">
+           <iframe width="100%" height="100%" frameborder="0" style="border:0" src="http://googleusercontent.com/maps.google.com/73510+Colley+Ave,+Norfolk,+VA&t=&z=15&ie=UTF8&iwloc=&output=embed"></iframe>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div style="font-weight:900; font-size:20px; font-style:italic; margin-bottom:10px;">MONARCH</div>
+      <p>© 2026 Monarch Hair Club. Powered by Net Studio.</p>
+    </div>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+    // Drop the Universal Booking Widget Code Here
+  </script>
+</body>
+</html>
