@@ -6,6 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
   <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    window.nsOpenBooking = window.nsOpenBooking || function(payload = {}) {
+      if (window.NetStudio && typeof window.NetStudio.open === "function") return window.NetStudio.open(payload);
+      if (typeof window.openBooking === "function") return window.openBooking(payload);
+      console.warn("Booking engine loading...");
+    };
+  </script>
+
   <style>
     /* --- CORE VARIABLES --- */
     :root {
@@ -79,7 +88,7 @@
       display: flex; gap: 30px; overflow-x: auto; padding-bottom: 20px;
       scrollbar-width: none; /* Hide scrollbar */
     }
-    .squad-card { min-width: 180px; text-align: center; }
+    .squad-card { min-width: 180px; text-align: center; cursor: pointer; }
     .squad-img {
       width: 140px; height: 140px; border-radius: 50%; object-fit: cover;
       border: 3px solid var(--bg-card); margin: 0 auto 16px;
@@ -100,8 +109,8 @@
 <body>
 
   <nav>
-    <div class="brand">MONARCH</div>
-    <a href="#book" class="btn" style="padding: 10px 20px; font-size: 11px;">Book Now</a>
+    <div class="brand" id="nav_logo">MONARCH</div>
+    <a href="#book" class="btn" style="padding: 10px 20px; font-size: 11px;" onclick="window.nsOpenBooking(); return false;">Book Now</a>
   </nav>
 
   <header class="hero">
@@ -112,8 +121,8 @@
         Top-tier fades, tapers, and lineups in the heart of Hampton Roads. Minutes from ODU.
       </p>
       <div style="display:flex; gap:16px;">
-        <a href="#book" class="btn">Book Now</a>
-        <a href="#services" class="btn outline">View Menu</a>
+        <a href="#book" class="btn" onclick="window.nsOpenBooking(); return false;">Book Now</a>
+        <a href="services.html" class="btn outline">View Menu</a>
       </div>
     </div>
   </header>
@@ -150,27 +159,8 @@
       <span class="tagline">Meet The Team</span>
       <h2 style="margin-bottom:40px;">The Squad</h2>
       
-      <div class="squad-scroll">
-        <div class="squad-card">
-          <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=400" class="squad-img">
-          <div style="font-weight:700; font-size:14px;">The Surgeon</div>
-          <div class="handle">@BARBERSURGEN</div>
-        </div>
-        <div class="squad-card">
-          <img src="https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=400" class="squad-img">
-          <div style="font-weight:700; font-size:14px;">Azzie</div>
-          <div class="handle">@AZZIETHEBARBER</div>
-        </div>
-        <div class="squad-card">
-          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400" class="squad-img">
-          <div style="font-weight:700; font-size:14px;">Twice</div>
-          <div class="handle">@TWICETHEBARBER</div>
-        </div>
-        <div class="squad-card">
-          <img src="https://images.unsplash.com/photo-1583336130417-3346a1be7dee?w=400" class="squad-img">
-          <div style="font-weight:700; font-size:14px;">Joss</div>
-          <div class="handle">@LOVEJOSS_</div>
-        </div>
+      <div class="squad-scroll" id="team_scroll">
+        <div style="padding:20px; color:#555;">Loading squad...</div>
       </div>
     </div>
   </section>
@@ -207,13 +197,13 @@
 
       <div>
         <span class="tagline">Visit Us</span>
-        <h2>Norfolk, VA</h2>
+        <h2 id="biz_city">Norfolk, VA</h2>
         <p style="color:var(--text-muted); margin-bottom:20px;">
-          3510 Colley Ave, Norfolk, VA 23508<br>
-          (757) 581-4490
+          <span id="biz_address">Loading Address...</span><br>
+          <span id="biz_phone"></span>
         </p>
         <div style="width:100%; height:300px; background:#222; border:1px solid var(--border); border-radius:12px; overflow:hidden; filter:grayscale(100%);">
-           <iframe width="100%" height="100%" frameborder="0" style="border:0" src="http://googleusercontent.com/maps.google.com/73510+Colley+Ave,+Norfolk,+VA&t=&z=15&ie=UTF8&iwloc=&output=embed"></iframe>
+           <iframe id="map_frame" width="100%" height="100%" frameborder="0" style="border:0" src=""></iframe>
         </div>
       </div>
 
@@ -222,14 +212,128 @@
 
   <footer>
     <div class="container">
-      <div style="font-weight:900; font-size:20px; font-style:italic; margin-bottom:10px;">MONARCH</div>
-      <p>© 2026 Monarch Hair Club. Powered by Net Studio.</p>
+      <div id="footer_logo" style="font-weight:900; font-size:20px; font-style:italic; margin-bottom:10px;">MONARCH</div>
+      <p id="footer_copy">© 2026 Monarch Hair Club. Powered by Net Studio.</p>
     </div>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
   <script>
-    lucide.createIcons();
-    // Drop the Universal Booking Widget Code Here
+    if(window.lucide) lucide.createIcons();
+
+    /* --- UTILS --- */
+    function nsGetSlug() {
+      const q = new URLSearchParams(location.search).get("b");
+      if (q) return q.toLowerCase();
+      const h = location.hostname.toLowerCase();
+      const R = "netstudiodevelopment.com";
+      if (!h || h === "localhost" || h.startsWith("127.") || h === R || h === "www." + R) return null;
+      if (h.endsWith("." + R)) return h.slice(0, -(R.length + 1)).split(".")[0];
+      return null;
+    }
+
+    // ✅ PATCH 2: Context Helper
+    function nsSetBusinessContext(businessId) {
+      if (!businessId) return;
+      window.NS_BUSINESS_ID = businessId;
+      document.documentElement.setAttribute("data-business-id", businessId);
+      if (document.body) document.body.setAttribute("data-business-id", businessId);
+      try {
+        localStorage.setItem("ns_business_id", businessId);
+        sessionStorage.setItem("ns_business_id", businessId);
+      } catch(e) {}
+      try {
+        const u = new URL(location.href);
+        if (!u.searchParams.get("business_id")) {
+          u.searchParams.set("business_id", businessId);
+          history.replaceState({}, "", u.toString());
+        }
+      } catch(e) {}
+    }
+
+    // ✅ PATCH 3: Dynamic Script Loader
+    function nsLoadBookingEngine() {
+      return new Promise((resolve) => {
+        if (window.openBooking || (window.NetStudio && typeof window.NetStudio.open === "function")) return resolve(true);
+        const s = document.createElement("script");
+        s.src = "/netstudio_booking.js";
+        s.async = true;
+        s.onload = () => resolve(true);
+        s.onerror = () => resolve(false);
+        document.body.appendChild(s);
+      });
+    }
+
+    /* --- RENDERERS --- */
+    function renderTeam(members) {
+      const scroll = document.getElementById("team_scroll");
+      if(!scroll) return;
+
+      if(!members || members.length === 0) {
+        scroll.innerHTML = `<div style="padding:20px; color:#555;">No active squad members.</div>`;
+        return;
+      }
+
+      scroll.innerHTML = members.map(m => `
+        <div class="squad-card" onclick="window.location.href='team.html?b=${nsGetSlug()}'">
+          <img src="${m.profile_image_url || 'https://via.placeholder.com/400'}" class="squad-img">
+          <div style="font-weight:700; font-size:14px;">${m.name}</div>
+          <div class="handle">${m.role ? "@" + m.role.toUpperCase() : ""}</div>
+        </div>
+      `).join("");
+    }
+
+    /* --- MAIN LOAD --- */
+    const SB_URL = "https://jdvdgvolfmvlgyfklbwe.supabase.co";
+    const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpkdmRndm9sZm12bGd5ZmtsYndlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM1Mjk5MDgsImV4cCI6MjA3OTEwNTkwOH0.xiAOgWof9En3jbCpY1vrYpj3HD-O6jMHbamIHTSflek";
+    const sb = supabase.createClient(SB_URL, SB_KEY);
+    const SLUG = nsGetSlug();
+
+    async function loadMonarchHome() {
+      if (!SLUG) return;
+
+      // 1. Business Info
+      const { data: biz } = await sb.from("business")
+        .select("id, name, street_address, city, state, phone")
+        .eq("slug", SLUG).maybeSingle();
+      
+      if (!biz) return;
+
+      // ✅ PATCH 4: Context & Engine
+      nsSetBusinessContext(biz.id);
+      await nsLoadBookingEngine();
+
+      // Branding
+      if (biz.name) {
+        const n = biz.name.toUpperCase();
+        if(document.getElementById("nav_logo")) document.getElementById("nav_logo").textContent = n;
+        if(document.getElementById("footer_logo")) document.getElementById("footer_logo").textContent = n;
+        if(document.getElementById("footer_copy")) document.getElementById("footer_copy").textContent = `© ${new Date().getFullYear()} ${biz.name}. Powered by Net Studio.`;
+      }
+
+      // Address & Map
+      const addr = [biz.street_address, biz.city, biz.state].filter(Boolean).join(", ");
+      if(document.getElementById("biz_city") && biz.city) document.getElementById("biz_city").textContent = biz.city + (biz.state ? `, ${biz.state}` : "");
+      if(document.getElementById("biz_address")) document.getElementById("biz_address").textContent = addr;
+      if(document.getElementById("biz_phone")) document.getElementById("biz_phone").textContent = biz.phone || "";
+
+      if (addr) {
+        const q = encodeURIComponent(addr);
+        document.getElementById("map_frame").src = `http://googleusercontent.com/maps.google.com/maps?q=${q}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+      }
+
+      // 2. Fetch Team
+      const { data: members } = await sb.from("team_members")
+        .select("id, name, role, profile_image_url")
+        .eq("business_id", biz.id)
+        .eq("is_active", true)
+        .not("auth_user_id", "is", null);
+
+      renderTeam(members || []);
+    }
+
+    loadMonarchHome();
   </script>
 </body>
 </html>
