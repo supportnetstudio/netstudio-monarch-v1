@@ -131,12 +131,12 @@
 
   <footer>
     <div class="container">
-      <div style="font-weight:900; font-size:20px; font-style:italic; margin-bottom:10px;">MONARCH</div>
+      <div id="footer_logo" style="font-weight:900; font-size:20px; font-style:italic; margin-bottom:10px;">MONARCH</div>
       <p>© 2026 Monarch Hair Club. Powered by Net Studio.</p>
     </div>
   </footer>
 
-  <script src="/assets/js/netstudio_booking.js"></script>
+  <script src="/netstudio_booking.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
@@ -196,7 +196,7 @@
       window.openBooking({ staff_id: staffId });
     };
 
-    // keep existing API shape for top "Book Now"
+    // Global "Book Now"
     window.openBooking = window.openBooking || function() {
       console.warn("Booking engine not loaded yet.");
     };
@@ -259,9 +259,7 @@
         return;
       }
 
-      // update logo link + page links with slug
-      const brand = document.getElementById("brand_logo");
-      if (brand) brand.setAttribute("href", nsLinkWithSlug("index.html"));
+      // update page links with slug
       document.querySelectorAll(".nav-links a[href]").forEach(a => {
         const href = a.getAttribute("href");
         if (href && !href.startsWith("http") && !href.startsWith("#")) {
@@ -281,8 +279,17 @@
         return;
       }
 
-      // logo text = business name
-      if (brand && biz.name) brand.textContent = String(biz.name).toUpperCase();
+      // Apply Branding (Top + Footer)
+      const topLogo = document.getElementById("brand_logo");
+      const footerLogo = document.getElementById("footer_logo");
+      if (biz.name) {
+        const name = String(biz.name).toUpperCase();
+        if (topLogo) {
+            topLogo.textContent = name;
+            topLogo.setAttribute("href", nsLinkWithSlug("index.html"));
+        }
+        if (footerLogo) footerLogo.textContent = name;
+      }
 
       // ✅ RULE: only team members that are active AND logged in
       const { data: members, error: mErr } = await sb
@@ -303,7 +310,7 @@
       renderTeam(members || []);
     }
 
-    // your existing profile stub
+    // Stub for profile (to be built later)
     function openProfile(teamMemberId) {
       console.log("Navigating to profile for:", teamMemberId);
     }
