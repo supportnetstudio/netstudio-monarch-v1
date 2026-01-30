@@ -8,10 +8,23 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <script>
-    window.nsOpenBooking = window.nsOpenBooking || function(payload = {}) {
-      if (window.NetStudio && typeof window.NetStudio.open === "function") return window.NetStudio.open(payload);
-      if (typeof window.openBooking === "function") return window.openBooking(payload);
-      console.warn("Booking engine loading...");
+    // Booking readiness latch
+    window.__nsBookingReady = window.__nsBookingReady || null;
+
+    // Always call this everywhere (buttons/clicks)
+    window.nsOpenBooking = function(payload = {}) {
+      const run = () => {
+        if (window.NetStudio && typeof window.NetStudio.open === "function") return window.NetStudio.open(payload);
+        if (typeof window.openBooking === "function") return window.openBooking(payload);
+        console.warn("Booking engine not loaded yet");
+      };
+
+      // If booking is still initializing, queue this click
+      if (window.__nsBookingReady && typeof window.__nsBookingReady.then === "function") {
+        return window.__nsBookingReady.then(run);
+      }
+
+      return run();
     };
   </script>
 
@@ -174,32 +187,50 @@
       return null;
     }
 
-    // ✅ PATCH 2: Context Helper
+    // ✅ PATCH 2: Strong Context Helper
     function nsSetBusinessContext(businessId) {
       if (!businessId) return;
+
+      // globals
       window.NS_BUSINESS_ID = businessId;
+      window.__NS_BUSINESS_ID__ = businessId;
+
+      // DOM (multiple keys so the engine can find it no matter what it checks)
       document.documentElement.setAttribute("data-business-id", businessId);
-      if (document.body) document.body.setAttribute("data-business-id", businessId);
+      document.documentElement.setAttribute("data-ns-business-id", businessId);
+      if (document.body) {
+        document.body.setAttribute("data-business-id", businessId);
+        document.body.setAttribute("data-ns-business-id", businessId);
+      }
+
+      // Cache (multiple keys)
       try {
         localStorage.setItem("ns_business_id", businessId);
+        localStorage.setItem("business_id", businessId);
         sessionStorage.setItem("ns_business_id", businessId);
-      } catch(e) {}
+        sessionStorage.setItem("business_id", businessId);
+      } catch (e) {}
+
+      // URL (multiple params)
       try {
         const u = new URL(location.href);
-        if (!u.searchParams.get("business_id")) {
-          u.searchParams.set("business_id", businessId);
-          history.replaceState({}, "", u.toString());
-        }
-      } catch(e) {}
+        if (!u.searchParams.get("business_id")) u.searchParams.set("business_id", businessId);
+        if (!u.searchParams.get("ns_business_id")) u.searchParams.set("ns_business_id", businessId);
+        if (!u.searchParams.get("bid")) u.searchParams.set("bid", businessId);
+        history.replaceState({}, "", u.toString());
+      } catch (e) {}
     }
 
-    // ✅ PATCH 3: Dynamic Script Loader
+    // ✅ PATCH 3: Clean Engine Loader (Once Only)
     function nsLoadBookingEngine() {
       return new Promise((resolve) => {
-        if (window.openBooking || (window.NetStudio && typeof window.NetStudio.open === "function")) return resolve(true);
+        // already injected?
+        if (document.querySelector('script[data-ns-booking="1"]')) return resolve(true);
+
         const s = document.createElement("script");
-        s.src = "/netstudio_booking.js";
+        s.src = "/netstudio_booking.js?v=" + Date.now(); // cache-bust while debugging
         s.async = true;
+        s.setAttribute("data-ns-booking", "1");
         s.onload = () => resolve(true);
         s.onerror = () => resolve(false);
         document.body.appendChild(s);
@@ -258,7 +289,7 @@
         const member = window.__TEAM_MAP__?.get(r.team_member_id);
         const tagName = member ? `Cut by ${member.name}` : (r.caption || "Fresh Look");
 
-        // Specific Booking Action
+        // Specific Booking Action (Using Safe Stub)
         const bookAction = member 
             ? `window.nsOpenBooking({ staff_id: '${member.id}' })` 
             : `window.nsOpenBooking()`;
@@ -285,9 +316,10 @@
       
       if (!biz) return;
 
-      // ✅ PATCH 4: Set Context & Load Engine NOW
+      // ✅ PATCH 4: Set Context & Latch Engine Loading
       nsSetBusinessContext(biz.id);
-      await nsLoadBookingEngine();
+      window.__nsBookingReady = nsLoadBookingEngine();
+      await window.__nsBookingReady;
 
       // Branding
       if (biz.name) {
