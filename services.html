@@ -74,7 +74,7 @@
     .book-mini {
       background: transparent; border: 1px solid var(--border); color: white;
       padding: 8px 16px; font-size: 10px; font-weight: 700; text-transform: uppercase;
-      margin-left: 20px; transition: 0.2s;
+      margin-left: 20px; transition: 0.2s; cursor: pointer;
     }
     .menu-item:hover .book-mini { background: white; color: black; border-color: white; }
 
@@ -93,82 +93,17 @@
       <a href="team.html">The Squad</a>
       <a href="contact.html">Contact</a>
     </div>
-    <a href="#book" class="btn" onclick="openBooking()">Book Now</a>
+    <button type="button" class="btn" onclick="window.openBooking?.()">Book Now</button>
   </nav>
 
   <main class="container" style="padding-top: 60px;">
     
     <div class="text-center" style="margin-bottom: 40px;">
       <span class="tagline">The Menu</span>
-      <h1>Precision Grooming</h1>
+      <h1 id="nsMenuTitle">Precision Grooming</h1>
     </div>
 
-    <div class="menu-section">
-      <h3 style="color:var(--text-muted); font-size:12px; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:10px;">Haircuts</h3>
-      
-      <div class="menu-grid">
-        <div class="menu-item" onclick="openBooking()">
-          <div class="item-info">
-            <h3>Standard Cut</h3>
-            <p>Any style. Fades, tapers, caesars. Includes razor finish.</p>
-          </div>
-          <div style="display:flex; align-items:center;">
-            <span class="item-price">$35</span>
-            <button class="book-mini">Book</button>
-          </div>
-        </div>
-
-        <div class="menu-item" onclick="openBooking()">
-          <div class="item-info">
-            <h3>Skin Fade</h3>
-            <p>Zero/Bald fade blended to perfection. Precision work.</p>
-          </div>
-          <div style="display:flex; align-items:center;">
-            <span class="item-price">$40</span>
-            <button class="book-mini">Book</button>
-          </div>
-        </div>
-
-        <div class="menu-item" onclick="openBooking()">
-          <div class="item-info">
-            <h3>Monarch Special (Cut + Beard)</h3>
-            <p>Full service haircut with beard sculpting and hot towel.</p>
-          </div>
-          <div style="display:flex; align-items:center;">
-            <span class="item-price">$55</span>
-            <button class="book-mini">Book</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="menu-section">
-      <h3 style="color:var(--text-muted); font-size:12px; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:10px;">Maintenance</h3>
-      
-      <div class="menu-grid">
-        <div class="menu-item" onclick="openBooking()">
-          <div class="item-info">
-            <h3>Beard Sculpt</h3>
-            <p>Razor line up, trim, and shape.</p>
-          </div>
-          <div style="display:flex; align-items:center;">
-            <span class="item-price">$20</span>
-            <button class="book-mini">Book</button>
-          </div>
-        </div>
-
-        <div class="menu-item" onclick="openBooking()">
-          <div class="item-info">
-            <h3>Line Up Only</h3>
-            <p>Crisp edges. No length taken off top.</p>
-          </div>
-          <div style="display:flex; align-items:center;">
-            <span class="item-price">$15</span>
-            <button class="book-mini">Book</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div id="nsCategoryList"></div>
 
   </main>
 
@@ -179,9 +114,178 @@
     </div>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <script>
     lucide.createIcons();
-    function openBooking() { console.log("Open Widget"); }
+
+    // ---------- SLUG LOGIC ----------
+    function nsGetSlugFromHost() {
+      const qp = new URLSearchParams(location.search).get("b");
+      if (qp) return String(qp).trim().toLowerCase();
+
+      const host = (location.hostname || "").toLowerCase();
+      if (!host || host === "localhost" || host.startsWith("127.")) return null;
+
+      const ROOT = "netstudiodevelopment.com";
+      if (host === ROOT || host === "www." + ROOT) return null;
+
+      if (host.endsWith("." + ROOT)) {
+        const slug = host.slice(0, -(ROOT.length + 1)).split(".")[0];
+        return slug || null;
+      }
+      return null;
+    }
+
+    function nsShouldUseQuerySlug() {
+      const host = (location.hostname || "").toLowerCase();
+      return host.endsWith(".pages.dev") || host.endsWith(".workers.dev") || host === "localhost" || host.startsWith("127.");
+    }
+
+    function nsLinkWithSlug(targetPath) {
+      const slug = nsGetSlugFromHost();
+      if (!slug) return targetPath;
+      if (!nsShouldUseQuerySlug()) return targetPath;
+
+      const u = new URL(targetPath, location.href);
+      u.searchParams.set("b", slug);
+      return u.pathname + "?" + u.searchParams.toString() + u.hash;
+    }
+
+    function nsWireHeaderNav() {
+      document.querySelectorAll("a.nav-link[data-page]").forEach(a => {
+        const page = a.getAttribute("data-page") || a.getAttribute("href") || "index.html";
+        a.setAttribute("href", nsLinkWithSlug(page));
+
+        const current = (location.pathname.split("/").pop() || "index.html").toLowerCase();
+        a.classList.toggle("active", page.toLowerCase() === current);
+      });
+    }
+    document.addEventListener("DOMContentLoaded", nsWireHeaderNav);
+
+    // ---------- SUPABASE ----------
+    window.NS = {
+      ...(window.NS || {}),
+      SUPABASE_URL: "https://jdvdgvolfmvlgyfklbwe.supabase.co",
+      SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpkdmRndm9sZm12bGd5ZmtsYndlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM1Mjk5MDgsImV4cCI6MjA3OTEwNTkwOH0.xiAOgWof9En3jbCpY1vrYpj3HD-O6jMHbamIHTSflek",
+      BUSINESS_SLUG: nsGetSlugFromHost()
+    };
+
+    const sb = window.supabaseClient || window.supabase.createClient(window.NS.SUPABASE_URL, window.NS.SUPABASE_ANON_KEY);
+    window.supabaseClient = sb;
+
+    async function nsLoadBusiness() {
+      if (!window.NS.BUSINESS_SLUG) return null;
+
+      const { data, error } = await sb
+        .from("business")
+        .select("id,name,logo_url")
+        .eq("slug", window.NS.BUSINESS_SLUG)
+        .maybeSingle();
+
+      if (error || !data) return null;
+      window.BUSINESS_ID = data.id;
+
+      // 🔥 Store ID so booking engine finds it immediately
+      try { localStorage.setItem("ns_business_id", data.id); } catch(e) {}
+
+      return data;
+    }
+
+    async function nsLoadMenuItems() {
+      if (!window.BUSINESS_ID) return [];
+      const { data, error } = await sb
+        .from("menu_items")
+        .select("*")
+        .eq("business_id", window.BUSINESS_ID)
+        .eq("is_active", true)
+        .order("section", { ascending: true })
+        .order("name", { ascending: true });
+
+      if (error) return [];
+      return data || [];
+    }
+
+    function nsMoneyFromRow(row) {
+      if (typeof row.price_cents === "number") {
+        const dollars = row.price_cents / 100;
+        return Number.isFinite(dollars) ? `$${dollars.toFixed(2)}` : "";
+      }
+      if (row.price != null && row.price !== "") {
+        const n = Number(row.price);
+        return Number.isFinite(n) ? `$${n.toFixed(2)}` : String(row.price);
+      }
+      return "";
+    }
+
+    function nsRenderMenu(items) {
+      const mount = document.getElementById("nsCategoryList");
+      if (!mount) return;
+
+      if (!items.length) {
+        mount.innerHTML = `<div style="opacity:.7; padding:20px 0;">No services found.</div>`;
+        return;
+      }
+
+      const groups = {};
+      items.forEach(i => {
+        const cat = (i.section || "Services").trim();
+        (groups[cat] ||= []).push(i);
+      });
+
+      mount.innerHTML = "";
+
+      Object.entries(groups).forEach(([cat, rows]) => {
+        const section = document.createElement("div");
+        section.className = "menu-section";
+
+        section.innerHTML = `
+          <h3 style="color:var(--text-muted); font-size:12px; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:10px;">
+            ${cat}
+          </h3>
+          <div class="menu-grid">
+            ${rows.map(r => `
+              <div class="menu-item" onclick="window.openBooking?.('${r.id}')">
+                <div class="item-info">
+                  <h3>${r.name || ""}</h3>
+                  <p>${r.description || ""}</p>
+                </div>
+                <div style="display:flex; align-items:center;">
+                  <span class="item-price">${nsMoneyFromRow(r)}</span>
+                  <button type="button" class="book-mini"
+                    onclick="event.stopPropagation(); window.openBooking?.('${r.id}')">
+                    Book
+                  </button>
+                </div>
+              </div>
+            `).join("")}
+          </div>
+        `;
+        mount.appendChild(section);
+      });
+    }
+
+    function nsLoadBookingEngineScript() {
+      // Load booking engine AFTER BUSINESS_ID is known so it initializes clean.
+      const s = document.createElement("script");
+      s.src = "./netstudio_booking.js";
+      s.defer = true;
+      document.body.appendChild(s);
+    }
+
+    (async () => {
+      const biz = await nsLoadBusiness();
+      if (!biz) return;
+
+      // Optional: title swap (keeps your design)
+      const t = document.getElementById("nsMenuTitle");
+      if (t && biz.name) t.textContent = "Service Menu";
+
+      const items = await nsLoadMenuItems();
+      nsRenderMenu(items);
+
+      nsLoadBookingEngineScript();
+    })();
   </script>
 </body>
 </html>
