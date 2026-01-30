@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>MONARCH — Powered by Net Studio</title>
+  <title>Barbershop — Powered by Net Studio</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -206,6 +206,8 @@
       function apply(data, biz) {
         const home = data.home || {};
         const hero = home.hero || {};
+        const services = home.services || {}; // Standardized services
+        const features = home.features || {}; // Standardized features/why
         const extra = home.section_extra || {};
 
         const bName = (biz.name || "MONARCH").toUpperCase();
@@ -219,15 +221,17 @@
         if ($("hero_headline")) $("hero_headline").innerHTML = pick(hero.headline, "Premium Cuts.<br>Fair Prices.");
         if ($("hero_subheadline")) $("hero_subheadline").textContent = pick(hero.subheadline, "Top-tier fades and lineups.");
 
-        if ($("services_kicker")) $("services_kicker").textContent = pick(home.services_kicker, "What We Do");
-        if ($("services_title")) $("services_title").textContent = pick(home.services_title, "Precision Grooming");
+        if ($("services_kicker")) $("services_kicker").textContent = pick(services.kicker, "What We Do");
+        if ($("services_title")) $("services_title").textContent = pick(services.title, "Precision Grooming");
+        
         if ($("squad_kicker")) $("squad_kicker").textContent = pick(extra.kicker, "Meet The Team");
         if ($("squad_title")) $("squad_title").textContent = pick(extra.headline, "The Squad");
 
-        if ($("why_kicker")) $("why_kicker").textContent = pick(home.why_kicker, "Why Monarch");
-        if ($("why_title")) $("why_title").textContent = pick(home.why_title, "The Top Choice");
+        if ($("why_kicker")) $("why_kicker").textContent = pick(features.kicker, "Why Monarch");
+        if ($("why_title")) $("why_title").textContent = pick(features.title, "The Top Choice");
 
-        const whyItems = home.why_list || [
+        // ✅ PATCH 1: Standardized Reads from Master Schema (features.items)
+        const whyItems = features.items || [
           { num: "01", label: "Affordable", text: "Unbeatable prices." },
           { num: "02", label: "Pro Barbers", text: "Precision and speed." }
         ];
@@ -243,7 +247,9 @@
         if ($("biz_city")) $("biz_city").textContent = biz.city || "Norfolk, VA";
         if ($("biz_address")) $("biz_address").textContent = address;
         if ($("biz_phone")) $("biz_phone").textContent = biz.phone || "";
-        if ($("map_frame")) $("map_frame").src = `http://googleusercontent.com/maps.google.com/maps?q=${encodeURIComponent(address)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+        
+        // ✅ PATCH 2: Corrected Secure Google Maps URL
+        if ($("map_frame")) $("map_frame").src = `https://maps.google.com/maps?q=${encodeURIComponent(address)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
 
         if (window.lucide) lucide.createIcons();
       }
