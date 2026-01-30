@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Monarch — The Lookbook</title>
+  <title>Lookbook — Powered by Net Studio</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -11,353 +11,199 @@
     // Booking readiness latch
     window.__nsBookingReady = window.__nsBookingReady || null;
 
-    // Always call this everywhere (buttons/clicks)
     window.nsOpenBooking = function(payload = {}) {
       const run = () => {
         if (window.NetStudio && typeof window.NetStudio.open === "function") return window.NetStudio.open(payload);
-        if (typeof window.openBooking === "function") return window.openBooking(payload);
         console.warn("Booking engine not loaded yet");
       };
-
-      // If booking is still initializing, queue this click
       if (window.__nsBookingReady && typeof window.__nsBookingReady.then === "function") {
         return window.__nsBookingReady.then(run);
       }
-
       return run();
     };
   </script>
 
   <style>
-    /* --- CORE VARIABLES --- */
     :root {
       --bg-body: #0a0a0a;
       --bg-card: #141414;
       --text-main: #ffffff;
       --text-muted: #a1a1aa;
-      --accent: #ef4444; /* Bright Red */
+      --accent: #ef4444; 
       --border: rgba(255, 255, 255, 0.1);
       --font-body: 'Inter', sans-serif;
     }
-
-    /* --- RESET --- */
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      background: var(--bg-body);
-      color: var(--text-main);
-      font-family: var(--font-body);
-      line-height: 1.5;
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    /* --- TYPOGRAPHY --- */
+    body { background: var(--bg-body); color: var(--text-main); font-family: var(--font-body); line-height: 1.5; overflow-x: hidden; }
     h1 { font-size: clamp(40px, 8vw, 64px); font-weight: 900; line-height: 0.95; letter-spacing: -0.04em; text-transform: uppercase; margin-bottom: 24px; }
-    h2 { font-size: 32px; font-weight: 800; text-transform: uppercase; letter-spacing: -0.02em; margin-bottom: 16px; }
     .tagline { color: var(--accent); font-weight: 800; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; display: block; margin-bottom: 12px; }
-
-    /* --- UTILITIES --- */
     .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-    .section-pad { padding: 80px 0; }
     
-    .btn {
-      display: inline-flex; background: var(--accent); color: white;
-      padding: 14px 28px; font-weight: 700; text-transform: uppercase; font-size: 12px;
-      letter-spacing: 0.05em; text-decoration: none; border-radius: 4px;
-      transition: 0.2s; border: none; cursor: pointer;
-    }
-    .btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
-    
+    .btn { display: inline-flex; background: var(--accent); color: white; padding: 14px 28px; font-weight: 700; text-transform: uppercase; font-size: 12px; letter-spacing: 0.05em; border-radius: 4px; transition: 0.2s; cursor: pointer; border: none; text-decoration: none; }
     .btn.outline { background: transparent; border: 1px solid var(--border); }
     .btn.outline:hover, .btn.outline.active { border-color: var(--accent); color: var(--accent); }
 
-    /* --- NAVIGATION --- */
-    nav {
-      position: sticky; top: 0; width: 100%; padding: 20px 24px; z-index: 50;
-      display: flex; justify-content: space-between; align-items: center;
-      background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(10px);
-      border-bottom: 1px solid var(--border);
-    }
+    nav { position: sticky; top: 0; width: 100%; padding: 20px 24px; z-index: 50; display: flex; justify-content: space-between; align-items: center; background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
     .brand { font-weight: 900; font-size: 20px; letter-spacing: -0.05em; font-style: italic; text-decoration: none; color: white; }
     .nav-links { display: flex; gap: 30px; }
-    .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 13px; font-weight: 600; text-transform: uppercase; transition: 0.2s; }
-    .nav-links a:hover { color: white; }
-    @media(max-width: 768px) { .nav-links { display: none; } }
+    .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 13px; font-weight: 600; text-transform: uppercase; }
 
-    /* --- HERO --- */
-    .gallery-hero {
-      text-align: center; padding: 80px 0 40px; border-bottom: 1px solid var(--border);
-    }
-
-    /* --- FILTERS --- */
-    .filter-bar {
-      display: flex; justify-content: center; gap: 12px; padding: 40px 0; flex-wrap: wrap;
-    }
-
-    /* --- THE GRID --- */
-    .lookbook-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
-      gap: 2px; /* Tight gap for "Feed" feel */
-    }
-    
-    .look-card {
-      position: relative; aspect-ratio: 4/5; overflow: hidden; group; cursor: pointer;
-    }
-    
-    .look-img {
-      width: 100%; height: 100%; object-fit: cover; 
-      filter: grayscale(100%); transition: 0.4s ease;
-    }
-    
-    .look-overlay {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.6); display: flex; flex-direction: column;
-      justify-content: center; align-items: center; opacity: 0;
-      transition: 0.3s ease;
-    }
-
-    /* Hover Effects */
+    .gallery-hero { text-align: center; padding: 80px 0 40px; border-bottom: 1px solid var(--border); }
+    .filter-bar { display: flex; justify-content: center; gap: 12px; padding: 40px 0; flex-wrap: wrap; }
+    .lookbook-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2px; }
+    .look-card { position: relative; aspect-ratio: 4/5; overflow: hidden; cursor: pointer; }
+    .look-img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); transition: 0.4s ease; }
+    .look-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; transition: 0.3s ease; }
     .look-card:hover .look-img { filter: grayscale(0%); transform: scale(1.05); }
     .look-card:hover .look-overlay { opacity: 1; }
-
-    .look-title { 
-      font-weight: 900; font-size: 24px; text-transform: uppercase; 
-      font-style: italic; margin-bottom: 8px; transform: translateY(20px); transition: 0.3s;
-    }
+    .look-title { font-weight: 900; font-size: 24px; text-transform: uppercase; font-style: italic; margin-bottom: 8px; transform: translateY(20px); transition: 0.3s; }
     .look-card:hover .look-title { transform: translateY(0); }
 
-    /* --- FOOTER --- */
     footer { border-top: 1px solid var(--border); padding: 40px 0; text-align: center; color: var(--text-muted); font-size: 12px; margin-top: 80px; }
-
+    @media(max-width: 768px) { .nav-links { display: none; } }
+    #site-error { display: none; text-align: center; padding: 100px 20px; color: #666; font-size: 14px;}
   </style>
 </head>
-<body>
+<body id="gallery">
 
-  <nav>
-    <a href="index.html" class="brand" id="nav_logo">MONARCH</a>
-    <div class="nav-links">
-      <a href="index.html">Home</a>
-      <a href="monarch_services.html">Services</a>
-      <a href="monarch_gallery.html" style="color:white;">Lookbook</a>
-      <a href="monarch_team.html">Squad</a>
-    </div>
-    <a href="#book" class="btn" style="padding: 10px 20px; font-size: 11px;" onclick="window.nsOpenBooking(); return false;">Book Now</a>
-  </nav>
+  <div id="site-error"><h2>404</h2><p>Lookbook not found.</p></div>
 
-  <header class="container gallery-hero">
-    <span class="tagline">The Portfolio</span>
-    <h1>Fresh Cuts Only.</h1>
-    <p style="color: var(--text-muted); max-width: 500px; margin: 0 auto;">
-      Real clients. Real results. Browse the catalog and find your next look.
-    </p>
-  </header>
-
-  <main class="container">
-    
-    <div class="filter-bar" id="team_filter">
+  <div id="main-content" style="opacity: 0; transition: opacity 0.5s ease;">
+    <nav>
+      <a href="index.html" class="brand" id="nav_logo">MONARCH</a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="gallery.html" style="color:white;">Lookbook</a>
       </div>
+      <a href="#book" class="btn" style="padding: 10px 20px; font-size: 11px;" onclick="nsOpenBooking(); return false;">Book Now</a>
+    </nav>
 
-    <div class="lookbook-grid" id="gallery_grid">
-      <div style="grid-column:1/-1; padding:80px 0; text-align:center; color:#555;">Loading portfolio...</div>
-    </div>
+    <header class="container gallery-hero">
+      <span id="gallery_kicker" class="tagline"></span>
+      <h1 id="gallery_heading"></h1>
+      <p id="gallery_text" style="color: var(--text-muted); max-width: 500px; margin: 0 auto;"></p>
+    </header>
 
-  </main>
+    <main class="container">
+      <div class="filter-bar" id="team_filter"></div>
+      <div class="lookbook-grid" id="gallery_grid"></div>
+    </main>
 
-  <footer>
-    <div class="container">
-      <div id="footer_logo" style="font-weight:900; font-size:20px; font-style:italic; margin-bottom:10px;">MONARCH</div>
-      <p id="ns_address" style="margin-bottom:10px; opacity:0.6;"></p>
-      <p>© 2026 Monarch Hair Club. Powered by Net Studio.</p>
-    </div>
-  </footer>
+    <footer>
+      <div class="container">
+        <div id="footer_logo" style="font-weight:900; font-size:20px; font-style:italic; margin-bottom:10px;"></div>
+        <p id="ns_address" style="margin-bottom:10px; opacity:0.6;"></p>
+        <p id="footer_copy"></p>
+      </div>
+    </footer>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
   <script>
-    if (window.lucide) lucide.createIcons();
+    (() => {
+      const $ = (id) => document.getElementById(id);
+      const pick = (...vals) => vals.find(v => v !== undefined && v !== null && String(v).trim() !== "") || "";
 
-    /* --- UTILS --- */
-    function nsGetSlug() {
-      const q = new URLSearchParams(location.search).get("b");
-      if (q) return q.toLowerCase();
-      const h = location.hostname.toLowerCase();
-      const R = "netstudiodevelopment.com";
-      if (!h || h === "localhost" || h.startsWith("127.") || h === R || h === "www." + R) return null;
-      if (h.endsWith("." + R)) return h.slice(0, -(R.length + 1)).split(".")[0];
-      return null;
-    }
-
-    // ✅ PATCH 2: Strong Context Helper
-    function nsSetBusinessContext(businessId) {
-      if (!businessId) return;
-
-      // globals
-      window.NS_BUSINESS_ID = businessId;
-      window.__NS_BUSINESS_ID__ = businessId;
-
-      // DOM (multiple keys so the engine can find it no matter what it checks)
-      document.documentElement.setAttribute("data-business-id", businessId);
-      document.documentElement.setAttribute("data-ns-business-id", businessId);
-      if (document.body) {
-        document.body.setAttribute("data-business-id", businessId);
-        document.body.setAttribute("data-ns-business-id", businessId);
+      function nsDetectSlug() {
+        const host = location.hostname.toLowerCase();
+        if (host.endsWith(".netstudiodevelopment.com")) return host.split(".")[0];
+        return new URLSearchParams(location.search).get("b");
       }
 
-      // Cache (multiple keys)
-      try {
-        localStorage.setItem("ns_business_id", businessId);
-        localStorage.setItem("business_id", businessId);
-        sessionStorage.setItem("ns_business_id", businessId);
-        sessionStorage.setItem("business_id", businessId);
-      } catch (e) {}
+      const NS = {
+        SB_URL: "https://jdvdgvolfmvlgyfklbwe.supabase.co",
+        SB_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpkdmRndm9sZm12bGd5ZmtsYndlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM1Mjk5MDgsImV4cCI6MjA3OTEwNTkwOH0.xiAOgWof9En3jbCpY1vrYpj3HD-O6jMHbamIHTSflek",
+        SLUG: nsDetectSlug(),
+        TEMPLATE: "monarch_v1"
+      };
 
-      // URL (multiple params)
-      try {
-        const u = new URL(location.href);
-        if (!u.searchParams.get("business_id")) u.searchParams.set("business_id", businessId);
-        if (!u.searchParams.get("ns_business_id")) u.searchParams.set("ns_business_id", businessId);
-        if (!u.searchParams.get("bid")) u.searchParams.set("bid", businessId);
-        history.replaceState({}, "", u.toString());
-      } catch (e) {}
-    }
+      const sb = supabase.createClient(NS.SB_URL, NS.SB_KEY);
+      window.__GALLERY_DATA__ = [];
+      window.__TEAM_MAP__ = new Map();
 
-    // ✅ PATCH 3: Clean Engine Loader (Once Only)
-    function nsLoadBookingEngine() {
-      return new Promise((resolve) => {
-        // already injected?
-        if (document.querySelector('script[data-ns-booking="1"]')) return resolve(true);
-
-        const s = document.createElement("script");
-        s.src = "/netstudio_booking.js?v=" + Date.now(); // cache-bust while debugging
-        s.async = true;
-        s.setAttribute("data-ns-booking", "1");
-        s.onload = () => resolve(true);
-        s.onerror = () => resolve(false);
-        document.body.appendChild(s);
-      });
-    }
-
-    /* --- DATA & RENDER --- */
-    const SB_URL = "https://jdvdgvolfmvlgyfklbwe.supabase.co";
-    const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpkdmRndm9sZm12bGd5ZmtsYndlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM1Mjk5MDgsImV4cCI6MjA3OTEwNTkwOH0.xiAOgWof9En3jbCpY1vrYpj3HD-O6jMHbamIHTSflek";
-    const sb = supabase.createClient(SB_URL, SB_KEY);
-    const SLUG = nsGetSlug();
-
-    function renderFilters(members) {
-      const el = document.getElementById("team_filter");
-      if (!el) return;
-
-      el.innerHTML = `
-        <button class="btn outline active" data-filter="all">All Cuts</button>
-        ${members.map(m => `
-          <button class="btn outline" data-filter="${m.id}">${(m.name || "Artist").toUpperCase()}</button>
-        `).join("")}
-      `;
-
-      el.querySelectorAll(".btn.outline").forEach(btn => {
-        btn.addEventListener("click", () => {
-          el.querySelectorAll(".btn.outline").forEach(b => b.classList.remove("active"));
-          btn.classList.add("active");
-          renderGrid(window.__GALLERY_ROWS__ || [], btn.dataset.filter);
+      function nsLoadBookingEngine() {
+        return new Promise((resolve) => {
+          if (document.querySelector('script[data-ns-booking="1"]')) return resolve(true);
+          const s = document.createElement("script");
+          s.src = "/netstudio_booking.js";
+          s.async = true;
+          s.setAttribute("data-ns-booking", "1");
+          s.onload = () => resolve(true);
+          s.onerror = () => resolve(false);
+          document.body.appendChild(s);
         });
-      });
-    }
-
-    function renderGrid(rows, filterId = "all") {
-      const grid = document.getElementById("gallery_grid");
-      if (!grid) return;
-      grid.innerHTML = "";
-
-      let list = [];
-
-      // ✅ LOGIC: All = 'shop' type. Member ID = matches ID.
-      if (filterId === "all") {
-        list = rows.filter(r => r.type === 'shop');
-      } else {
-        list = rows.filter(r => String(r.team_member_id) === filterId);
       }
 
-      if (list.length === 0) {
-        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding: 40px; color: #555;">No images found.</div>`;
-        return;
-      }
-
-      list.forEach(r => {
-        if (!r.image_url) return;
+      function renderGrid(filterId = "all") {
+        const grid = $("gallery_grid");
+        const list = filterId === "all" ? window.__GALLERY_DATA__ : window.__GALLERY_DATA__.filter(i => i.team_member_id === filterId);
         
-        // Find member name if linked
-        const member = window.__TEAM_MAP__?.get(r.team_member_id);
-        const tagName = member ? `Cut by ${member.name}` : (r.caption || "Fresh Look");
-
-        // Specific Booking Action (Using Safe Stub)
-        const bookAction = member 
-            ? `window.nsOpenBooking({ staff_id: '${member.id}' })` 
-            : `window.nsOpenBooking()`;
-
-        grid.insertAdjacentHTML("beforeend", `
-          <div class="look-card" onclick="${bookAction}">
-            <img src="${r.image_url}" class="look-img" alt="Gallery Image">
-            <div class="look-overlay">
-              <div class="look-title">${tagName}</div>
-              <button class="btn">Book This Look</button>
-            </div>
-          </div>
-        `);
-      });
-    }
-
-    async function loadMonarchGallery() {
-      if (!SLUG) return;
-
-      // 1. Business
-      const { data: biz } = await sb.from("business")
-        .select("id, name, street_address, city, state")
-        .eq("slug", SLUG).maybeSingle();
-      
-      if (!biz) return;
-
-      // ✅ PATCH 4: Set Context & Latch Engine Loading
-      nsSetBusinessContext(biz.id);
-      window.__nsBookingReady = nsLoadBookingEngine();
-      await window.__nsBookingReady;
-
-      // Branding
-      if (biz.name) {
-        const n = biz.name.toUpperCase();
-        if (document.getElementById("nav_logo")) document.getElementById("nav_logo").textContent = n;
-        if (document.getElementById("footer_logo")) document.getElementById("footer_logo").textContent = n;
+        grid.innerHTML = list.length ? list.map(i => {
+          const artistName = window.__TEAM_MAP__.get(i.team_member_id);
+          const tag = artistName ? `Cut by ${artistName.split(' ')[0]}` : (i.caption || "Fresh Look");
+          return `
+            <div class="look-card" onclick="nsOpenBooking({ staff_id: '${i.team_member_id || ''}' })">
+              <img src="${i.image_url}" class="look-img" alt="Gallery">
+              <div class="look-overlay">
+                <div class="look-title">${tag}</div>
+                <button class="btn">Book This Look</button>
+              </div>
+            </div>`;
+        }).join("") : `<p style="grid-column:1/-1; text-align:center; padding:40px; color:#555;">No matches found.</p>`;
       }
 
-      const addrEl = document.getElementById("ns_address");
-      if (addrEl && biz.street_address) {
-        addrEl.textContent = [biz.street_address, biz.city, biz.state].filter(Boolean).join(", ");
+      function apply(data, biz, images) {
+        const g = data.gallery || {};
+        const bName = biz.name || "MONARCH";
+        if($("nav_logo")) $("nav_logo").textContent = bName.toUpperCase();
+        if($("footer_logo")) $("footer_logo").textContent = bName.toUpperCase();
+        if($("footer_copy")) $("footer_copy").textContent = `© ${new Date().getFullYear()} ${bName}. Powered by Net Studio.`;
+
+        const addr = [biz.street_address, biz.city, biz.state].filter(Boolean).join(", ");
+        if($("ns_address")) $("ns_address").textContent = addr;
+
+        if($("gallery_kicker")) $("gallery_kicker").textContent = pick(g.kicker, "The Portfolio");
+        if($("gallery_heading")) $("gallery_heading").textContent = pick(g.heading, "Fresh Cuts Only.");
+        if($("gallery_text")) $("gallery_text").textContent = pick(g.text, "Real clients. Real results.");
+
+        const teamArray = Array.isArray(biz.team_json) ? biz.team_json : [];
+        window.__TEAM_MAP__ = new Map(teamArray.map(m => [m.id || m.uuid, m.name || m.display_name]));
+        window.__GALLERY_DATA__ = images;
+
+        const filterBar = $("team_filter");
+        filterBar.innerHTML = `<button class="btn outline active" data-id="all">ALL CUTS</button>` + 
+          teamArray.map(m => `<button class="btn outline" data-id="${m.id || m.uuid}">${(m.name || "Artist").toUpperCase()}</button>`).join("");
+
+        filterBar.querySelectorAll(".btn.outline").forEach(btn => {
+          btn.onclick = () => {
+            filterBar.querySelectorAll(".btn.outline").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            renderGrid(btn.dataset.id);
+          };
+        });
+
+        renderGrid("all");
+        $("main-content").style.opacity = "1";
       }
 
-      // 2. Team Members
-      const { data: members } = await sb.from("team_members")
-        .select("id, name, role")
-        .eq("business_id", biz.id)
-        .eq("is_active", true)
-        .not("auth_user_id", "is", null);
-      
-      const validMembers = members || [];
-      window.__TEAM_MAP__ = new Map(validMembers.map(m => [m.id, m]));
+      async function init() {
+        if (!NS.SLUG) { $("site-error").style.display = "block"; return; }
+        const { data: biz } = await sb.from("business").select("*").eq("slug", NS.SLUG).maybeSingle();
+        if (!biz) { $("site-error").style.display = "block"; return; }
 
-      // 3. Gallery (Fetch All, Exclude Profile Pics)
-      const { data: images } = await sb.from("gallery_image")
-        .select("id, image_url, team_member_id, caption, type")
-        .eq("business_id", biz.id)
-        .eq("is_profile", false)
-        .order("created_at", { ascending: false });
+        window.NS_BUSINESS_ID = biz.id;
+        window.__nsBookingReady = nsLoadBookingEngine();
 
-      window.__GALLERY_ROWS__ = images || [];
+        const [siteRes, imgRes] = await Promise.all([
+          sb.from("business_sites").select("content_json").eq("business_id", biz.id).eq("template_key", NS.TEMPLATE).maybeSingle(),
+          sb.from("gallery_image").select("*").eq("business_id", biz.id).eq("is_profile", false).order("created_at", { ascending: false })
+        ]);
 
-      // 4. Render
-      renderFilters(validMembers);
-      renderGrid(window.__GALLERY_ROWS__, "all");
-    }
-
-    loadMonarchGallery();
+        apply(siteRes.data?.content_json || {}, biz, imgRes.data || []);
+      }
+      init();
+    })();
   </script>
 </body>
 </html>
