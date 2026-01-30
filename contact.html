@@ -6,6 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
   <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    window.nsOpenBooking = window.nsOpenBooking || function(payload = {}) {
+      if (window.NetStudio && typeof window.NetStudio.open === "function") return window.NetStudio.open(payload);
+      if (typeof window.openBooking === "function") return window.openBooking(payload);
+      console.warn("Booking engine loading...");
+    };
+  </script>
+
   <style>
     /* --- CORE VARIABLES --- */
     :root {
@@ -54,7 +63,6 @@
     .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 12px; font-weight: 700; text-transform: uppercase; transition: 0.2s; }
     .nav-links a:hover, .nav-links a.active { color: white; }
     
-    /* Mobile Nav Fix */
     @media(max-width: 768px) { .nav-links { display: none; } }
 
     /* --- CONTACT LAYOUT --- */
@@ -90,12 +98,12 @@
     .input-field:focus { border-color: var(--accent); }
 
     /* --- RIGHT SIDE (MAP) --- */
-    .map-side { position: relative; background: #222; overflow: hidden; }
+    .map-side { position: relative; background: #222; overflow: hidden; min-height: 400px; }
     .map-frame {
       width: 100%; height: 100%; filter: grayscale(100%) invert(100%) contrast(1.2); opacity: 0.8;
+      border: 0;
     }
-    @media(max-width: 768px) { .map-side { height: 400px; } }
-
+    
     /* --- WALK-IN CARD --- */
     .info-overlay {
       position: absolute; bottom: 40px; left: 40px; right: 40px;
@@ -116,15 +124,15 @@
 <body>
 
   <nav>
-    <a href="index.html" class="brand">MONARCH</a>
+    <a href="index.html" class="brand" id="nav_logo">MONARCH</a>
     <div class="nav-links">
       <a href="index.html">Home</a>
-      <a href="services.html">Services</a>
-      <a href="team.html">The Squad</a>
-      <a href="about.html">About</a>
-      <a href="contact.html" class="active">Contact</a>
+      <a href="monarch_services.html">Services</a>
+      <a href="monarch_team.html">The Squad</a>
+      <a href="monarch_gallery.html">Lookbook</a>
+      <a href="monarch_contact.html" class="active">Contact</a>
     </div>
-    <a href="#book" class="btn" style="width: auto;" onclick="openBooking()">Book Now</a>
+    <a href="#book" class="btn" style="width: auto;" onclick="window.nsOpenBooking(); return false;">Book Now</a>
   </nav>
 
   <div class="contact-split">
@@ -140,7 +148,7 @@
         <div class="icon-box"><i data-lucide="map-pin"></i></div>
         <div>
           <h4 style="font-weight: 800; text-transform: uppercase;">Location</h4>
-          <p style="font-size: 14px; color: var(--text-muted);">3510 Colley Ave<br>Norfolk, VA 23508</p>
+          <p id="contact_address" style="font-size: 14px; color: var(--text-muted);">Loading...</p>
         </div>
       </div>
 
@@ -148,50 +156,38 @@
         <div class="icon-box"><i data-lucide="phone"></i></div>
         <div>
           <h4 style="font-weight: 800; text-transform: uppercase;">Phone</h4>
-          <p style="font-size: 14px; color: var(--text-muted);">(757) 581-4490</p>
+          <p id="contact_phone" style="font-size: 14px; color: var(--text-muted);">—</p>
         </div>
       </div>
 
-      <form class="form-box">
+      <form class="form-box" id="contact_form">
         <div class="input-group">
-          <input type="text" class="input-field" placeholder="Name">
+          <input type="text" id="frm_name" class="input-field" placeholder="Name" required>
         </div>
         <div class="input-group">
-          <input type="email" class="input-field" placeholder="Email">
+          <input type="email" id="frm_email" class="input-field" placeholder="Email" required>
         </div>
         <div class="input-group">
-          <textarea class="input-field" rows="4" placeholder="Message"></textarea>
+          <textarea id="frm_msg" class="input-field" rows="4" placeholder="Message" required></textarea>
         </div>
-        <button class="btn">Send Message</button>
+        <button type="submit" class="btn">Send Message</button>
       </form>
     </div>
 
     <div class="map-side">
-      <iframe 
-        class="map-frame" frameborder="0" style="border:0"
-        src="http://googleusercontent.com/maps.google.com/73510+Colley+Ave,+Norfolk,+VA&t=&z=15&ie=UTF8&iwloc=&output=embed">
-      </iframe>
+      <iframe id="map_frame" class="map-frame" src=""></iframe>
 
       <div class="info-overlay">
         <h4 style="text-transform: uppercase; margin-bottom: 16px; font-weight: 800; color: var(--accent);">Operating Hours</h4>
         
-        <div class="hour-row">
-          <span>Tue - Sat</span>
-          <span style="font-weight: 700;">9:00 AM - 7:00 PM</span>
-        </div>
-        <div class="hour-row">
-          <span>Sunday</span>
-          <span style="color: var(--text-muted);">Closed</span>
-        </div>
-        <div class="hour-row">
-          <span>Monday</span>
-          <span style="color: var(--text-muted);">Closed</span>
+        <div id="hours_list">
+          <div class="hour-row"><span>Loading...</span></div>
         </div>
         
         <div style="margin-top: 20px; padding-top: 10px; border-top: 1px solid var(--border);">
             <p style="font-size: 11px; color: var(--text-muted); line-height: 1.4;">
                 <strong style="color:white;">Walk-In Policy:</strong><br>
-                Walk-ins are accepted but appointments take priority. Wait times may vary between 12pm - 6pm.
+                Walk-ins are accepted but appointments take priority.
             </p>
         </div>
       </div>
@@ -201,14 +197,68 @@
 
   <footer>
     <div class="container">
-      <div style="font-weight:900; font-size:20px; font-style:italic; margin-bottom:10px;">MONARCH</div>
+      <div id="footer_logo" style="font-weight:900; font-size:20px; font-style:italic; margin-bottom:10px;">MONARCH</div>
       <p>© 2026 Monarch Hair Club. Powered by Net Studio.</p>
     </div>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
   <script>
-    lucide.createIcons();
-    function openBooking() { console.log("Open Widget"); }
-  </script>
-</body>
-</html>
+    if (window.lucide) lucide.createIcons();
+
+    /* --- UTILS --- */
+    function nsGetSlug() {
+      const q = new URLSearchParams(location.search).get("b");
+      if (q) return q.toLowerCase();
+      const h = location.hostname.toLowerCase();
+      const R = "netstudiodevelopment.com";
+      if (!h || h === "localhost" || h.startsWith("127.") || h === R || h === "www." + R) return null;
+      if (h.endsWith("." + R)) return h.slice(0, -(R.length + 1)).split(".")[0];
+      return null;
+    }
+
+    // ✅ PATCH 2: Context Helper
+    function nsSetBusinessContext(businessId) {
+      if (!businessId) return;
+      window.NS_BUSINESS_ID = businessId;
+      document.documentElement.setAttribute("data-business-id", businessId);
+      if (document.body) document.body.setAttribute("data-business-id", businessId);
+      try {
+        localStorage.setItem("ns_business_id", businessId);
+        sessionStorage.setItem("ns_business_id", businessId);
+      } catch(e) {}
+      try {
+        const u = new URL(location.href);
+        if (!u.searchParams.get("business_id")) {
+          u.searchParams.set("business_id", businessId);
+          history.replaceState({}, "", u.toString());
+        }
+      } catch(e) {}
+    }
+
+    // ✅ PATCH 3: Dynamic Script Loader
+    function nsLoadBookingEngine() {
+      return new Promise((resolve) => {
+        if (window.openBooking || (window.NetStudio && typeof window.NetStudio.open === "function")) return resolve(true);
+        const s = document.createElement("script");
+        s.src = "/netstudio_booking.js";
+        s.async = true;
+        s.onload = () => resolve(true);
+        s.onerror = () => resolve(false);
+        document.body.appendChild(s);
+      });
+    }
+
+    /* --- FORMATTERS --- */
+    function formatTime(t) {
+      if(!t) return "";
+      const [h, m] = t.split(":");
+      const H = parseInt(h);
+      const ampm = H >= 12 ? "PM" : "AM";
+      const H12 = H % 12 || 12;
+      return `${H12}:${m} ${ampm}`;
+    }
+
+    // Sorter for text days
+    const SORTER = { "sunday":0, "monday":1, "t
