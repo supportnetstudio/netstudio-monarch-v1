@@ -6,6 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
   <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    window.nsOpenBooking = window.nsOpenBooking || function(payload = {}) {
+      if (window.NetStudio && typeof window.NetStudio.open === "function") return window.NetStudio.open(payload);
+      if (typeof window.openBooking === "function") return window.openBooking(payload);
+      console.warn("Booking engine loading...");
+    };
+  </script>
+
   <style>
     /* --- CORE VARIABLES --- */
     :root {
@@ -112,14 +121,14 @@
 <body>
 
   <nav>
-    <a href="index.html" class="brand">MONARCH</a>
+    <a href="index.html" class="brand" id="nav_logo">MONARCH</a>
     <div class="nav-links">
       <a href="index.html">Home</a>
       <a href="monarch_services.html">Services</a>
       <a href="monarch_gallery.html" style="color:white;">Lookbook</a>
       <a href="monarch_team.html">Squad</a>
     </div>
-    <a href="#book" class="btn" style="padding: 10px 20px; font-size: 11px;" onclick="openBooking()">Book Now</a>
+    <a href="#book" class="btn" style="padding: 10px 20px; font-size: 11px;" onclick="window.nsOpenBooking(); return false;">Book Now</a>
   </nav>
 
   <header class="container gallery-hero">
@@ -132,114 +141,191 @@
 
   <main class="container">
     
-    <div class="filter-bar">
-      <button class="btn outline active">All Cuts</button>
-      <button class="btn outline">Skin Fades</button>
-      <button class="btn outline">Tapers</button>
-      <button class="btn outline">Designs</button>
-      <button class="btn outline">Beards</button>
-    </div>
-
-    <div class="lookbook-grid">
-      
-      <div class="look-card" onclick="openBooking()">
-        <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&q=80&w=800" class="look-img">
-        <div class="look-overlay">
-          <div class="look-title">Mid Fade</div>
-          <button class="btn">Book This Look</button>
-        </div>
+    <div class="filter-bar" id="team_filter">
       </div>
 
-      <div class="look-card" onclick="openBooking()">
-        <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&q=80&w=800" class="look-img">
-        <div class="look-overlay">
-          <div class="look-title">Crop Top</div>
-          <button class="btn">Book This Look</button>
-        </div>
-      </div>
-
-      <div class="look-card" onclick="openBooking()">
-        <img src="https://images.unsplash.com/photo-1605497788044-5a32c7078486?auto=format&fit=crop&q=80&w=800" class="look-img">
-        <div class="look-overlay">
-          <div class="look-title">High Taper</div>
-          <button class="btn">Book This Look</button>
-        </div>
-      </div>
-
-      <div class="look-card" onclick="openBooking()">
-        <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=800" class="look-img">
-        <div class="look-overlay">
-          <div class="look-title">Beard Sculpt</div>
-          <button class="btn">Book This Look</button>
-        </div>
-      </div>
-
-      <div class="look-card" onclick="openBooking()">
-        <img src="https://images.unsplash.com/photo-1593702295094-aea8c5c93169?auto=format&fit=crop&q=80&w=800" class="look-img">
-        <div class="look-overlay">
-          <div class="look-title">Design Work</div>
-          <button class="btn">Book This Look</button>
-        </div>
-      </div>
-
-      <div class="look-card" onclick="openBooking()">
-        <img src="https://images.unsplash.com/photo-1532710093739-9470acff878f?auto=format&fit=crop&q=80&w=800" class="look-img">
-        <div class="look-overlay">
-          <div class="look-title">Classic Cut</div>
-          <button class="btn">Book This Look</button>
-        </div>
-      </div>
-
-      <div class="look-card" onclick="openBooking()">
-        <img src="https://images.unsplash.com/photo-1517832606299-7ae9b720a186?auto=format&fit=crop&q=80&w=800" class="look-img">
-        <div class="look-overlay">
-          <div class="look-title">Buzz Cut</div>
-          <button class="btn">Book This Look</button>
-        </div>
-      </div>
-
-      <div class="look-card" onclick="openBooking()">
-        <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=800" class="look-img">
-        <div class="look-overlay">
-          <div class="look-title">Line Up</div>
-          <button class="btn">Book This Look</button>
-        </div>
-      </div>
-
-      <div class="look-card" onclick="openBooking()">
-        <img src="https://images.unsplash.com/photo-1583336130417-3346a1be7dee?auto=format&fit=crop&q=80&w=800" class="look-img">
-        <div class="look-overlay">
-          <div class="look-title">Textured Crop</div>
-          <button class="btn">Book This Look</button>
-        </div>
-      </div>
-
-    </div>
-
-    <div style="text-align: center; margin-top: 60px;">
-      <button class="btn outline" style="padding: 16px 40px;">Load More</button>
+    <div class="lookbook-grid" id="gallery_grid">
+      <div style="grid-column:1/-1; padding:80px 0; text-align:center; color:#555;">Loading portfolio...</div>
     </div>
 
   </main>
 
   <footer>
     <div class="container">
-      <div style="font-weight:900; font-size:20px; font-style:italic; margin-bottom:10px;">MONARCH</div>
+      <div id="footer_logo" style="font-weight:900; font-size:20px; font-style:italic; margin-bottom:10px;">MONARCH</div>
+      <p id="ns_address" style="margin-bottom:10px; opacity:0.6;"></p>
       <p>© 2026 Monarch Hair Club. Powered by Net Studio.</p>
     </div>
   </footer>
 
-  <script src="netstudio_engine.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
   <script>
-    lucide.createIcons();
-    function openBooking() { 
-      if(typeof NetStudio !== 'undefined') {
-        NetStudio.open(); 
-      } else {
-        console.log("Engine not loaded yet");
-      }
+    if (window.lucide) lucide.createIcons();
+
+    /* --- UTILS --- */
+    function nsGetSlug() {
+      const q = new URLSearchParams(location.search).get("b");
+      if (q) return q.toLowerCase();
+      const h = location.hostname.toLowerCase();
+      const R = "netstudiodevelopment.com";
+      if (!h || h === "localhost" || h.startsWith("127.") || h === R || h === "www." + R) return null;
+      if (h.endsWith("." + R)) return h.slice(0, -(R.length + 1)).split(".")[0];
+      return null;
     }
+
+    // ✅ PATCH 2: Context Helper
+    function nsSetBusinessContext(businessId) {
+      if (!businessId) return;
+      window.NS_BUSINESS_ID = businessId;
+      document.documentElement.setAttribute("data-business-id", businessId);
+      if (document.body) document.body.setAttribute("data-business-id", businessId);
+      try {
+        localStorage.setItem("ns_business_id", businessId);
+        sessionStorage.setItem("ns_business_id", businessId);
+      } catch(e) {}
+      try {
+        const u = new URL(location.href);
+        if (!u.searchParams.get("business_id")) {
+          u.searchParams.set("business_id", businessId);
+          history.replaceState({}, "", u.toString());
+        }
+      } catch(e) {}
+    }
+
+    // ✅ PATCH 3: Dynamic Script Loader
+    function nsLoadBookingEngine() {
+      return new Promise((resolve) => {
+        if (window.openBooking || (window.NetStudio && typeof window.NetStudio.open === "function")) return resolve(true);
+        const s = document.createElement("script");
+        s.src = "/netstudio_booking.js";
+        s.async = true;
+        s.onload = () => resolve(true);
+        s.onerror = () => resolve(false);
+        document.body.appendChild(s);
+      });
+    }
+
+    /* --- DATA & RENDER --- */
+    const SB_URL = "https://jdvdgvolfmvlgyfklbwe.supabase.co";
+    const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpkdmRndm9sZm12bGd5ZmtsYndlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM1Mjk5MDgsImV4cCI6MjA3OTEwNTkwOH0.xiAOgWof9En3jbCpY1vrYpj3HD-O6jMHbamIHTSflek";
+    const sb = supabase.createClient(SB_URL, SB_KEY);
+    const SLUG = nsGetSlug();
+
+    function renderFilters(members) {
+      const el = document.getElementById("team_filter");
+      if (!el) return;
+
+      el.innerHTML = `
+        <button class="btn outline active" data-filter="all">All Cuts</button>
+        ${members.map(m => `
+          <button class="btn outline" data-filter="${m.id}">${(m.name || "Artist").toUpperCase()}</button>
+        `).join("")}
+      `;
+
+      el.querySelectorAll(".btn.outline").forEach(btn => {
+        btn.addEventListener("click", () => {
+          el.querySelectorAll(".btn.outline").forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          renderGrid(window.__GALLERY_ROWS__ || [], btn.dataset.filter);
+        });
+      });
+    }
+
+    function renderGrid(rows, filterId = "all") {
+      const grid = document.getElementById("gallery_grid");
+      if (!grid) return;
+      grid.innerHTML = "";
+
+      let list = [];
+
+      // ✅ LOGIC: All = 'shop' type. Member ID = matches ID.
+      if (filterId === "all") {
+        list = rows.filter(r => r.type === 'shop');
+      } else {
+        list = rows.filter(r => String(r.team_member_id) === filterId);
+      }
+
+      if (list.length === 0) {
+        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding: 40px; color: #555;">No images found.</div>`;
+        return;
+      }
+
+      list.forEach(r => {
+        if (!r.image_url) return;
+        
+        // Find member name if linked
+        const member = window.__TEAM_MAP__?.get(r.team_member_id);
+        const tagName = member ? `Cut by ${member.name}` : (r.caption || "Fresh Look");
+
+        // Specific Booking Action
+        const bookAction = member 
+            ? `window.nsOpenBooking({ staff_id: '${member.id}' })` 
+            : `window.nsOpenBooking()`;
+
+        grid.insertAdjacentHTML("beforeend", `
+          <div class="look-card" onclick="${bookAction}">
+            <img src="${r.image_url}" class="look-img" alt="Gallery Image">
+            <div class="look-overlay">
+              <div class="look-title">${tagName}</div>
+              <button class="btn">Book This Look</button>
+            </div>
+          </div>
+        `);
+      });
+    }
+
+    async function loadMonarchGallery() {
+      if (!SLUG) return;
+
+      // 1. Business
+      const { data: biz } = await sb.from("business")
+        .select("id, name, street_address, city, state")
+        .eq("slug", SLUG).maybeSingle();
+      
+      if (!biz) return;
+
+      // ✅ PATCH 4: Set Context & Load Engine NOW
+      nsSetBusinessContext(biz.id);
+      await nsLoadBookingEngine();
+
+      // Branding
+      if (biz.name) {
+        const n = biz.name.toUpperCase();
+        if (document.getElementById("nav_logo")) document.getElementById("nav_logo").textContent = n;
+        if (document.getElementById("footer_logo")) document.getElementById("footer_logo").textContent = n;
+      }
+
+      const addrEl = document.getElementById("ns_address");
+      if (addrEl && biz.street_address) {
+        addrEl.textContent = [biz.street_address, biz.city, biz.state].filter(Boolean).join(", ");
+      }
+
+      // 2. Team Members
+      const { data: members } = await sb.from("team_members")
+        .select("id, name, role")
+        .eq("business_id", biz.id)
+        .eq("is_active", true)
+        .not("auth_user_id", "is", null);
+      
+      const validMembers = members || [];
+      window.__TEAM_MAP__ = new Map(validMembers.map(m => [m.id, m]));
+
+      // 3. Gallery (Fetch All, Exclude Profile Pics)
+      const { data: images } = await sb.from("gallery_image")
+        .select("id, image_url, team_member_id, caption, type")
+        .eq("business_id", biz.id)
+        .eq("is_profile", false)
+        .order("created_at", { ascending: false });
+
+      window.__GALLERY_ROWS__ = images || [];
+
+      // 4. Render
+      renderFilters(validMembers);
+      renderGrid(window.__GALLERY_ROWS__, "all");
+    }
+
+    loadMonarchGallery();
   </script>
 </body>
 </html>
