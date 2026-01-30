@@ -103,7 +103,7 @@
 <body>
 
   <nav>
-    <a href="index.html" class="brand">MONARCH</a>
+    <a href="index.html" class="brand" id="brand_logo">MONARCH</a>
     <div class="nav-links">
       <a href="index.html">Home</a>
       <a href="services.html">Services</a>
@@ -123,98 +123,8 @@
       </p>
     </div>
 
-    <div class="team-grid">
-      
-      <div class="team-card">
-        <div class="team-img-wrap">
-          <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&q=80&w=600" class="team-img" alt="The Surgeon">
-        </div>
-        <div class="team-info">
-          <span class="team-role">Owner / Master Barber</span>
-          <div class="team-name">The Surgeon</div>
-          <div class="team-handle">@THEBARBERSURGEN</div>
-          <p class="team-bio">
-            Specializing in precision fades, beard work, and custom cuts. The foundation of Monarch's standard.
-          </p>
-          <div class="team-actions">
-            <button class="btn" onclick="openProfile('thesurgeon')">Book</button>
-            <button class="btn btn-outline">Profile</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="team-card">
-        <div class="team-img-wrap">
-          <img src="https://images.unsplash.com/photo-1605497788044-5a32c7078486?auto=format&fit=crop&q=80&w=600" class="team-img" alt="Azzie">
-        </div>
-        <div class="team-info">
-          <span class="team-role">Barber</span>
-          <div class="team-name">Azzie</div>
-          <div class="team-handle">@AZZIETHEBARBER</div>
-          <p class="team-bio">
-            Known for sharp fades and high tapers. Strong dedication to the craft and consistent cuts every time.
-          </p>
-          <div class="team-actions">
-            <button class="btn" onclick="openProfile('azzie')">Book</button>
-            <button class="btn btn-outline">Profile</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="team-card">
-        <div class="team-img-wrap">
-          <img src="https://images.unsplash.com/photo-1622286342621-4bd786c2447c?auto=format&fit=crop&q=80&w=600" class="team-img" alt="Tatt">
-        </div>
-        <div class="team-info">
-          <span class="team-role">Barber</span>
-          <div class="team-name">Tatt</div>
-          <div class="team-handle">@YOFAVORITEBARBER</div>
-          <p class="team-bio">
-            Precise cuts, creative designs, and detailed women's styles. Years of experience and pure craftsmanship.
-          </p>
-          <div class="team-actions">
-            <button class="btn" onclick="openProfile('tatt')">Book</button>
-            <button class="btn btn-outline">Profile</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="team-card">
-        <div class="team-img-wrap">
-          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=600" class="team-img" alt="Twice">
-        </div>
-        <div class="team-info">
-          <span class="team-role">Barber</span>
-          <div class="team-name">Twice</div>
-          <div class="team-handle">@TWICETHEBARBER</div>
-          <p class="team-bio">
-            A focused, detail-driven barber with a smooth approach. Known for clean finishes and a relaxed chair experience.
-          </p>
-          <div class="team-actions">
-            <button class="btn" onclick="openProfile('twice')">Book</button>
-            <button class="btn btn-outline">Profile</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="team-card">
-        <div class="team-img-wrap">
-          <img src="https://images.unsplash.com/photo-1583336130417-3346a1be7dee?auto=format&fit=crop&q=80&w=600" class="team-img" alt="Joss">
-        </div>
-        <div class="team-info">
-          <span class="team-role">Braider / Stylist</span>
-          <div class="team-name">Joss</div>
-          <div class="team-handle">@LOVEJOSS_</div>
-          <p class="team-bio">
-            Calm, confident natural-hair stylist with a spiritual, grounded energy. The vibe is wise and resilient.
-          </p>
-          <div class="team-actions">
-            <button class="btn" onclick="openProfile('joss')">Book</button>
-            <button class="btn btn-outline">Profile</button>
-          </div>
-        </div>
-      </div>
-
+    <div class="team-grid" id="team_grid">
+      <div style="grid-column:1/-1; color:rgba(255,255,255,.6); padding:40px 0;">Loading team...</div>
     </div>
 
   </main>
@@ -226,16 +136,180 @@
     </div>
   </footer>
 
+  <script src="/assets/js/netstudio_booking.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <script>
-    lucide.createIcons();
-    
-    // This simulates opening the 'Linktree Killer' Staff Profile we built earlier
-    function openProfile(barberId) {
-        console.log("Navigating to microsite for: " + barberId);
-        // window.location.href = "/" + barberId; 
+    if (window.lucide) lucide.createIcons();
+
+    /* --- SLUG RESOLVER --- */
+    function nsGetSlugFromHost() {
+      const qp = new URLSearchParams(location.search).get("b");
+      if (qp) return String(qp).trim().toLowerCase();
+
+      const host = (location.hostname || "").toLowerCase();
+      if (!host || host === "localhost" || host.startsWith("127.")) return null;
+
+      const ROOT = "netstudiodevelopment.com";
+      if (host === ROOT || host === "www." + ROOT) return null;
+
+      if (host.endsWith("." + ROOT)) {
+        const slug = host.slice(0, -(ROOT.length + 1)).split(".")[0];
+        return slug || null;
+      }
+      return null;
     }
-    
-    function openBooking() { console.log("Open Universal Widget"); }
+
+    function nsShouldUseQuerySlug() {
+      const host = (location.hostname || "").toLowerCase();
+      return (
+        host.endsWith(".pages.dev") ||
+        host.endsWith(".workers.dev") ||
+        host === "localhost" ||
+        host.startsWith("127.")
+      );
+    }
+
+    function nsLinkWithSlug(targetPath) {
+      const slug = window.NS?.BUSINESS_SLUG || nsGetSlugFromHost();
+      if (!slug) return targetPath;
+
+      if (!nsShouldUseQuerySlug()) return targetPath;
+
+      const u = new URL(targetPath, location.href);
+      u.searchParams.set("b", slug);
+      return u.pathname + "?" + u.searchParams.toString() + u.hash;
+    }
+
+    /* --- CONFIG --- */
+    window.NS = window.NS || {};
+    window.NS.SUPABASE_URL = "https://jdvdgvolfmvlgyfklbwe.supabase.co";
+    window.NS.SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpkdmRndm9sZm12bGd5ZmtsYndlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM1Mjk5MDgsImV4cCI6MjA3OTEwNTkwOH0.xiAOgWof9En3jbCpY1vrYpj3HD-O6jMHbamIHTSflek";
+    window.NS.BUSINESS_SLUG = window.NS.BUSINESS_SLUG || nsGetSlugFromHost();
+
+    const sb = supabase.createClient(window.NS.SUPABASE_URL, window.NS.SUPABASE_ANON_KEY);
+    const BUSINESS_SLUG = window.NS.BUSINESS_SLUG;
+
+    /* --- BOOKING --- */
+    window.openBookingWithStaff = function(staffId) {
+      if (typeof window.openBooking !== "function") return;
+      window.openBooking({ staff_id: staffId });
+    };
+
+    // keep existing API shape for top "Book Now"
+    window.openBooking = window.openBooking || function() {
+      console.warn("Booking engine not loaded yet.");
+    };
+
+    /* --- UI HELPERS --- */
+    function escapeHtml(s) {
+      return String(s || "").replace(/[&<>"']/g, c => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
+      }[c]));
+    }
+
+    function renderTeam(list) {
+      const grid = document.getElementById("team_grid");
+      if (!grid) return;
+
+      if (!list.length) {
+        grid.innerHTML = `<div style="grid-column:1/-1; color:rgba(255,255,255,.6); padding:40px 0;">
+          No active, logged-in team members yet.
+        </div>`;
+        return;
+      }
+
+      grid.innerHTML = "";
+      list.forEach(m => {
+        const id = (m.id || "").toString();
+        const role = escapeHtml(m.role || "Team");
+        const name = escapeHtml(m.name || "Staff");
+        const bio  = escapeHtml(m.bio || "");
+        const handle = escapeHtml(m.specialties || m.email || ""); 
+        const img = escapeHtml(
+          m.profile_image_url ||
+          m.photo_url ||
+          "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&q=80&w=600"
+        );
+
+        grid.insertAdjacentHTML("beforeend", `
+          <div class="team-card">
+            <div class="team-img-wrap">
+              <img src="${img}" class="team-img" alt="${name}">
+            </div>
+            <div class="team-info">
+              <span class="team-role">${role}</span>
+              <div class="team-name">${name}</div>
+              <div class="team-handle">${handle ? escapeHtml(handle) : ""}</div>
+              <p class="team-bio">${bio || "Professional at this location."}</p>
+              <div class="team-actions">
+                <button class="btn" onclick="openBookingWithStaff('${escapeHtml(id)}')">Book</button>
+                <button class="btn btn-outline" onclick="openProfile('${escapeHtml(id)}')">Profile</button>
+              </div>
+            </div>
+          </div>
+        `);
+      });
+    }
+
+    async function loadBusinessAndTeam() {
+      const grid = document.getElementById("team_grid");
+      if (!BUSINESS_SLUG) {
+        if (grid) grid.innerHTML = `<div style="grid-column:1/-1; color:rgba(255,255,255,.6); padding:40px 0;">Business not found.</div>`;
+        return;
+      }
+
+      // update logo link + page links with slug
+      const brand = document.getElementById("brand_logo");
+      if (brand) brand.setAttribute("href", nsLinkWithSlug("index.html"));
+      document.querySelectorAll(".nav-links a[href]").forEach(a => {
+        const href = a.getAttribute("href");
+        if (href && !href.startsWith("http") && !href.startsWith("#")) {
+          a.setAttribute("href", nsLinkWithSlug(href));
+        }
+      });
+
+      const { data: biz, error: bErr } = await sb
+        .schema("public")
+        .from("business")
+        .select("id, name")
+        .eq("slug", BUSINESS_SLUG)
+        .maybeSingle();
+
+      if (bErr || !biz?.id) {
+        if (grid) grid.innerHTML = `<div style="grid-column:1/-1; color:rgba(255,255,255,.6); padding:40px 0;">Unable to load business.</div>`;
+        return;
+      }
+
+      // logo text = business name
+      if (brand && biz.name) brand.textContent = String(biz.name).toUpperCase();
+
+      // ✅ RULE: only team members that are active AND logged in
+      const { data: members, error: mErr } = await sb
+        .schema("public")
+        .from("team_members")
+        .select("id, name, role, bio, photo_url, profile_image_url, email, specialties, auth_user_id, is_active, created_at")
+        .eq("business_id", biz.id)
+        .eq("is_active", true)
+        .not("auth_user_id", "is", null)
+        .order("created_at", { ascending: true });
+
+      if (mErr) {
+        console.warn("team_members error:", mErr);
+        if (grid) grid.innerHTML = `<div style="grid-column:1/-1; color:rgba(255,255,255,.6); padding:40px 0;">Unable to load team.</div>`;
+        return;
+      }
+
+      renderTeam(members || []);
+    }
+
+    // your existing profile stub
+    function openProfile(teamMemberId) {
+      console.log("Navigating to profile for:", teamMemberId);
+    }
+    window.openProfile = openProfile;
+
+    loadBusinessAndTeam();
   </script>
 </body>
 </html>
