@@ -82,89 +82,100 @@
     .why-num { font-size: 32px; font-weight: 900; color: #333; line-height: 1; }
     
     footer { border-top: 1px solid var(--border); padding: 40px 0; text-align: center; color: var(--text-muted); font-size: 12px; }
+    
+    #site-error { display: none; text-align: center; padding: 100px 20px; color: #666; font-size: 14px; }
   </style>
 </head>
-<body>
+<body id="home">
 
-  <nav>
-    <div class="brand" id="nav_logo">MONARCH</div>
-    <a href="#book" class="btn" style="padding: 10px 20px; font-size: 11px;" onclick="window.nsOpenBooking(); return false;">Book Now</a>
-  </nav>
+  <div id="site-error">
+    <h2>404</h2>
+    <p>We couldn't find a barbershop at this address.</p>
+  </div>
 
-  <header class="hero" id="ns_hero">
-    <div class="container hero-content">
-      <span class="tagline" id="hero_kicker"></span>
-      <h1 id="hero_headline"></h1>
-      <p id="hero_subheadline" style="color:var(--text-muted); font-size:18px; margin-bottom:32px; max-width:400px;"></p>
-      <div style="display:flex; gap:16px;">
-        <a href="#book" class="btn" onclick="window.nsOpenBooking(); return false;">Book Now</a>
-        <a href="services.html" class="btn outline">View Menu</a>
-      </div>
-    </div>
-  </header>
+  <div id="main-content">
+    <nav>
+      <div class="brand" id="nav_logo">MONARCH</div>
+      <a href="#book" class="btn" style="padding: 10px 20px; font-size: 11px;" onclick="window.nsOpenBooking(); return false;">Book Now</a>
+    </nav>
 
-  <section class="container section-pad">
-    <span class="tagline" id="services_kicker"></span>
-    <h2 id="services_title"></h2>
-    <div class="svc-grid">
-      <div class="svc-card">
-        <i data-lucide="scissors" class="svc-icon"></i>
-        <h3 style="font-size:16px; font-weight:700; margin-bottom:8px;">Haircuts</h3>
-        <p style="font-size:13px; color:var(--text-muted);">Clean fades, tapers, and classic cuts.</p>
-      </div>
-      <div class="svc-card">
-        <i data-lucide="user" class="svc-icon"></i>
-        <h3 style="font-size:16px; font-weight:700; margin-bottom:8px;">Beard Trim</h3>
-        <p style="font-size:13px; color:var(--text-muted);">Sharp lineups and detailed grooming.</p>
-      </div>
-      <div class="svc-card">
-        <i data-lucide="zap" class="svc-icon"></i>
-        <h3 style="font-size:16px; font-weight:700; margin-bottom:8px;">Hot Towel</h3>
-        <p style="font-size:13px; color:var(--text-muted);">Traditional shave experience.</p>
-      </div>
-      <div class="svc-card">
-        <i data-lucide="smile" class="svc-icon"></i>
-        <h3 style="font-size:16px; font-weight:700; margin-bottom:8px;">Kids' Cuts</h3>
-        <p style="font-size:13px; color:var(--text-muted);">Comfortable cuts for young clients.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="section-pad squad-section">
-    <div class="container">
-      <span class="tagline" id="squad_kicker"></span>
-      <h2 id="squad_title" style="margin-bottom:40px;"></h2>
-      <div class="squad-scroll" id="team_scroll"></div>
-    </div>
-  </section>
-
-  <section class="container section-pad">
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:60px;">
-      <div>
-        <span class="tagline" id="why_kicker"></span>
-        <h2 id="why_title" style="margin-bottom:40px;"></h2>
-        <div id="why_items"></div>
-      </div>
-      <div>
-        <span class="tagline">Visit Us</span>
-        <h2 id="biz_city"></h2>
-        <p style="color:var(--text-muted); margin-bottom:20px;">
-          <span id="biz_address"></span><br>
-          <span id="biz_phone"></span>
-        </p>
-        <div style="width:100%; height:300px; background:#222; border:1px solid var(--border); border-radius:12px; overflow:hidden; filter:grayscale(100%);">
-           <iframe id="map_frame" width="100%" height="100%" frameborder="0" style="border:0"></iframe>
+    <header class="hero" id="ns_hero">
+      <div class="container hero-content">
+        <span class="tagline" id="hero_kicker"></span>
+        <h1 id="hero_headline"></h1>
+        <p id="hero_subheadline" style="color:var(--text-muted); font-size:18px; margin-bottom:32px; max-width:400px;"></p>
+        <div style="display:flex; gap:16px;">
+          <a href="#book" class="btn" onclick="window.nsOpenBooking(); return false;">Book Now</a>
+          <a href="services.html" class="btn outline">View Menu</a>
         </div>
       </div>
-    </div>
-  </section>
+    </header>
 
-  <footer>
-    <div class="container">
-      <div id="footer_logo" style="font-weight:900; font-size:20px; font-style:italic; margin-bottom:10px;"></div>
-      <p id="footer_copy"></p>
-    </div>
-  </footer>
+    <section class="container section-pad">
+      <span class="tagline" id="services_kicker"></span>
+      <h2 id="services_title"></h2>
+      <div class="svc-grid">
+        <div class="svc-card">
+          <i data-lucide="scissors" class="svc-icon"></i>
+          <h3 style="font-size:16px; font-weight:700; margin-bottom:8px;">Haircuts</h3>
+          <p style="font-size:13px; color:var(--text-muted);">Clean fades, tapers, and classic cuts.</p>
+        </div>
+        <div class="svc-card">
+          <i data-lucide="user" class="svc-icon"></i>
+          <h3 style="font-size:16px; font-weight:700; margin-bottom:8px;">Beard Trim</h3>
+          <p style="font-size:13px; color:var(--text-muted);">Sharp lineups and detailed grooming.</p>
+        </div>
+        <div class="svc-card">
+          <i data-lucide="zap" class="svc-icon"></i>
+          <h3 style="font-size:16px; font-weight:700; margin-bottom:8px;">Hot Towel</h3>
+          <p style="font-size:13px; color:var(--text-muted);">Traditional shave experience.</p>
+        </div>
+        <div class="svc-card">
+          <i data-lucide="smile" class="svc-icon"></i>
+          <h3 style="font-size:16px; font-weight:700; margin-bottom:8px;">Kids' Cuts</h3>
+          <p style="font-size:13px; color:var(--text-muted);">Comfortable cuts for young clients.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-pad squad-section">
+      <div class="container">
+        <span class="tagline" id="squad_kicker"></span>
+        <h2 id="squad_title" style="margin-bottom:40px;"></h2>
+        <div class="squad-scroll" id="team_scroll">
+           </div>
+      </div>
+    </section>
+
+    <section class="container section-pad">
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:60px;">
+        <div>
+          <span class="tagline" id="why_kicker"></span>
+          <h2 id="why_title" style="margin-bottom:40px;"></h2>
+          <div id="why_items">
+             </div>
+        </div>
+        <div>
+          <span class="tagline">Visit Us</span>
+          <h2 id="biz_city"></h2>
+          <p style="color:var(--text-muted); margin-bottom:20px;">
+            <span id="biz_address"></span><br>
+            <span id="biz_phone"></span>
+          </p>
+          <div style="width:100%; height:300px; background:#222; border:1px solid var(--border); border-radius:12px; overflow:hidden; filter:grayscale(100%);">
+             <iframe id="map_frame" width="100%" height="100%" frameborder="0" style="border:0"></iframe>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        <div id="footer_logo" style="font-weight:900; font-size:20px; font-style:italic; margin-bottom:10px;"></div>
+        <p id="footer_copy"></p>
+      </div>
+    </footer>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
@@ -186,8 +197,16 @@
         SB_URL: "https://jdvdgvolfmvlgyfklbwe.supabase.co",
         SB_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpkdmRndm9sZm12bGd5ZmtsYndlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM1Mjk5MDgsImV4cCI6MjA3OTEwNTkwOH0.xiAOgWof9En3jbCpY1vrYpj3HD-O6jMHbamIHTSflek",
         SLUG: nsDetectSlugProdOnly(),
-        TEMPLATE: "monarch_v1"
+        FALLBACK_TEMPLATE: "monarch_v1"
       };
+
+      // PATCH 2: True 404 Isolation
+      function show404(){
+        const e = document.getElementById("site-error");
+        const m = document.getElementById("main-content");
+        if (e) e.style.display = "block";
+        if (m) m.style.display = "none";
+      }
 
       const sb = supabase.createClient(NS.SB_URL, NS.SB_KEY);
 
@@ -215,8 +234,9 @@
         if ($("footer_logo")) $("footer_logo").textContent = bName;
         if ($("footer_copy")) $("footer_copy").textContent = `© ${new Date().getFullYear()} ${biz.name}. Powered by Net Studio.`;
 
-        const hBg = pick(hero.bg_image, biz.hero_bg_url, "https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&q=80&w=2000");
+        const hBg = pick(hero.bg, hero.bg_image, biz.hero_bg_url, "https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&q=80&w=2000");
         if ($("ns_hero")) $("ns_hero").style.backgroundImage = `linear-gradient(to right, rgba(0,0,0,0.8), rgba(0,0,0,0.4)), url('${hBg}')`;
+        
         if ($("hero_kicker")) $("hero_kicker").textContent = pick(hero.kicker, "Norfolk's Premier Studio");
         if ($("hero_headline")) $("hero_headline").innerHTML = pick(hero.headline, "Premium Cuts.<br>Fair Prices.");
         if ($("hero_subheadline")) $("hero_subheadline").textContent = pick(hero.subheadline, "Top-tier fades and lineups.");
@@ -224,23 +244,29 @@
         if ($("services_kicker")) $("services_kicker").textContent = pick(services.kicker, "What We Do");
         if ($("services_title")) $("services_title").textContent = pick(services.title, "Precision Grooming");
         
-        if ($("squad_kicker")) $("squad_kicker").textContent = pick(extra.kicker, "Meet The Team");
-        if ($("squad_title")) $("squad_title").textContent = pick(extra.headline, "The Squad");
+        // CLEAN HEADER: No text if DB is empty
+        if ($("squad_kicker")) $("squad_kicker").textContent = pick(extra.kicker, "");
+        if ($("squad_title")) $("squad_title").textContent = pick(extra.headline, "");
 
         if ($("why_kicker")) $("why_kicker").textContent = pick(features.kicker, "Why Monarch");
         if ($("why_title")) $("why_title").textContent = pick(features.title, "The Top Choice");
 
-        // ✅ PATCH 1: Standardized Reads from Master Schema (features.items)
-        const whyItems = features.items || [
-          { num: "01", label: "Affordable", text: "Unbeatable prices." },
-          { num: "02", label: "Pro Barbers", text: "Precision and speed." }
-        ];
+        // ✅ PATCH 1: Strict Loading for Features (No Fakes)
+        const whyItems = Array.isArray(features.items) ? features.items : null;
         if ($("why_items")) {
-          $("why_items").innerHTML = whyItems.map(i => `
-            <div class="why-row">
-              <div class="why-num">${i.num}</div>
-              <div><h4 style="font-weight:700; margin-bottom:4px;">${i.label}</h4><p style="font-size:13px; color:var(--text-muted);">${i.text}</p></div>
-            </div>`).join("");
+          if (!whyItems || whyItems.length === 0) {
+            $("why_items").innerHTML = `<div style="color:var(--text-muted); font-size:13px;">Loading...</div>`;
+          } else {
+            $("why_items").innerHTML = whyItems.map(i => `
+              <div class="why-row">
+                <div class="why-num">${pick(i.num, "")}</div>
+                <div>
+                  <h4 style="font-weight:700; margin-bottom:4px;">${pick(i.label, "")}</h4>
+                  <p style="font-size:13px; color:var(--text-muted);">${pick(i.text, "")}</p>
+                </div>
+              </div>
+            `).join("");
+          }
         }
 
         const address = [biz.street_address, biz.city, biz.state].filter(Boolean).join(", ");
@@ -248,37 +274,56 @@
         if ($("biz_address")) $("biz_address").textContent = address;
         if ($("biz_phone")) $("biz_phone").textContent = biz.phone || "";
         
-        // ✅ PATCH 2: Corrected Secure Google Maps URL
-        if ($("map_frame")) $("map_frame").src = `https://maps.google.com/maps?q=${encodeURIComponent(address)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+        // ✅ PATCH 3: HTTPS for Maps
+        if ($("map_frame")) $("map_frame").src = `https://googleusercontent.com/maps.google.com/0{encodeURIComponent(address)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
 
         if (window.lucide) lucide.createIcons();
       }
 
       async function init() {
-        if (!NS.SLUG) return;
+        if (!NS.SLUG) { show404(); return; }
+        
         const { data: biz } = await sb.from("business").select("*").eq("slug", NS.SLUG).maybeSingle();
-        if (!biz) return;
+        if (!biz) { show404(); return; }
 
         window.NS_BUSINESS_ID = biz.id;
-        await nsLoadBookingEngine();
+        document.documentElement.setAttribute("data-ns-business-id", String(biz.id));
+
+        // IDENTITY LOCK: Fetch Pointer
+        const { data: pointer } = await sb.from("business_sites_one").select("active_template_key").eq("business_id", biz.id).maybeSingle();
+        const activeKey = pointer?.active_template_key || NS.FALLBACK_TEMPLATE;
+
+        nsLoadBookingEngine(); // Non-blocking
 
         const [siteRes, teamRes] = await Promise.all([
-          sb.from("business_sites").select("content_json").eq("business_id", biz.id).eq("template_key", NS.TEMPLATE).maybeSingle(),
+          sb.from("business_sites").select("content_json").eq("business_id", biz.id).eq("template_key", activeKey).maybeSingle(),
           sb.from("team_members").select("*").eq("business_id", biz.id).eq("is_active", true).not("auth_user_id", "is", null)
         ]);
 
-        if ($("team_scroll") && teamRes.data) {
-          $("team_scroll").innerHTML = teamRes.data.map(m => `
-            <div class="squad-card" onclick="window.location.href='team.html?b=${NS.SLUG}'">
-              <img src="${m.profile_image_url || 'https://via.placeholder.com/400'}" class="squad-img">
-              <div style="font-weight:700; font-size:14px;">${m.name}</div>
-              <div class="handle">@${(m.role || "Stylist").toUpperCase()}</div>
-            </div>`).join("");
+        // ✅ PATCH 2: Strict Loading for Team (No Fakes)
+        const team = Array.isArray(teamRes.data) ? teamRes.data : [];
+        if ($("team_scroll")) {
+          if (team.length === 0) {
+            $("team_scroll").innerHTML = `<div style="color:var(--text-muted); font-size:13px; width:100%; text-align:center;">Loading...</div>`;
+          } else {
+            $("team_scroll").innerHTML = team.map(m => `
+              <div class="squad-card" onclick="window.location.href='team.html?b=${NS.SLUG}'">
+                <img src="${m.profile_image_url || ''}" class="squad-img">
+                <div style="font-weight:700; font-size:14px;">${pick(m.name, "")}</div>
+                <div class="handle">@${pick(m.role, "").toUpperCase()}</div>
+              </div>
+            `).join("");
+          }
+        }
+
+        if (!siteRes.data) {
+          console.warn(`[NetStudio] Missing business_sites row: template=${activeKey}, business_id=${biz.id}`);
         }
 
         apply(siteRes.data?.content_json || {}, biz);
       }
-      init();
+      
+      document.addEventListener("DOMContentLoaded", init);
     })();
   </script>
 </body>
