@@ -128,7 +128,7 @@
     
     <div class="page-hero">
       <div class="est-badge">EST. 2021</div>
-      <h1>Authentic<br>Norfolk Spirit.</h1>
+      <h1 id="about_heading">Authentic<br>Norfolk Spirit.</h1>
       <p class="text-body" style="max-width: 500px; font-size: 18px; color: white;" id="bio_text">
         The Monarch Hair Club isn't just where you get lined up, it's where you feel at home.
       </p>
@@ -136,38 +136,38 @@
 
     <div class="split-section">
       <div>
-        <span class="tagline">Our Story</span>
-        <h2>More Than A Cut</h2>
-        <p class="text-body">
+        <span class="tagline" id="story_kicker">Our Story</span>
+        <h2 id="story_title">More Than A Cut</h2>
+        <p class="text-body" id="story_p1">
           For years, our chair has been a place for conversation, connection, and community. 
           From catching up on the latest news to sharing life stories, this is where people come 
           to relax, laugh, and walk out feeling confident.
         </p>
-        <p class="text-body">
+        <p class="text-body" id="story_p2">
           We are built on the belief that a fresh cut isn't just about the look. 
           It's about the experience.
         </p>
       </div>
       <div class="img-frame">
-        <img src="https://images.unsplash.com/photo-1532710093739-9470acff878f?auto=format&fit=crop&q=80&w=800" alt="Barber Chair">
+        <img id="about_img" src="https://images.unsplash.com/photo-1532710093739-9470acff878f?auto=format&fit=crop&q=80&w=800" alt="Barber Chair">
       </div>
     </div>
 
     <div class="split-section split-reverse">
       <div>
-        <span class="tagline">The Shop</span>
-        <h2>Heart of Norfolk</h2>
-        <p class="text-body">
+        <span class="tagline" id="extra_kicker">The Shop</span>
+        <h2 id="extra_title">Heart of Norfolk</h2>
+        <p class="text-body" id="extra_p1">
           Right here on Colley Ave, The Monarch Hair Club is known for its welcoming atmosphere 
           and top-notch service.
         </p>
-        <p class="text-body">
+        <p class="text-body" id="extra_p2">
           Our space blends classic barber traditions with a modern touch. Whether you're here 
           for a sharp fade, a clean shave, or just to talk sports and life—Monarch is always ready for you.
         </p>
       </div>
       <div class="img-frame">
-        <img src="https://images.unsplash.com/photo-1503951914875-befbb711ed3e?auto=format&fit=crop&q=80&w=800" alt="Shop Interior">
+        <img id="extra_img" src="https://images.unsplash.com/photo-1503951914875-befbb711ed3e?auto=format&fit=crop&q=80&w=800" alt="Shop Interior">
       </div>
     </div>
 
@@ -221,7 +221,6 @@
       return null;
     }
 
-    // ✅ PATCH 2: Context Helper
     function nsSetBusinessContext(businessId) {
       if (!businessId) return;
       window.NS_BUSINESS_ID = businessId;
@@ -240,7 +239,6 @@
       } catch(e) {}
     }
 
-    // ✅ PATCH 3: Dynamic Script Loader
     function nsLoadBookingEngine() {
       return new Promise((resolve) => {
         if (window.openBooking || (window.NetStudio && typeof window.NetStudio.open === "function")) return resolve(true);
@@ -253,6 +251,83 @@
       });
     }
 
+    /* --- CONTENT HELPERS --- */
+    function setText(id, val){
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (val === undefined || val === null) return;
+      const s = String(val).trim();
+      if (!s) return;
+      el.textContent = s;
+    }
+
+    function setHTML(id, val){
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (val === undefined || val === null) return;
+      const s = String(val).trim();
+      if (!s) return;
+      el.innerHTML = s;
+    }
+
+    function setImg(id, url){
+      const el = document.getElementById(id);
+      if (!el) return;
+      const s = (url || "").toString().trim();
+      if (!s) return;
+      el.src = s;
+    }
+
+    function pickFirst(obj, keys){
+      if (!obj) return "";
+      for (const k of keys) {
+        const v = obj[k];
+        if (v !== undefined && v !== null && String(v).trim() !== "") return v;
+      }
+      return "";
+    }
+
+    /* --- CANONICAL ABOUT INJECTION --- */
+    function applyAboutCanonicalMonarch(content){
+      const about = content?.about || {};
+
+      // HERO
+      const hero = about.hero || {};
+      const heroHeading = pickFirst(hero, ["heading", "title", "h1"]);
+      const heroText    = pickFirst(hero, ["text", "subtitle", "lead", "body", "description"]);
+      const heroImg     = pickFirst(hero, ["image_url", "img", "image", "bg", "bg_url", "photo_url"]);
+
+      if (heroHeading) setHTML("about_heading", heroHeading);
+      if (heroText) setHTML("bio_text", heroText);
+      if (heroImg) setImg("about_img", heroImg);
+
+      // STORY
+      const story = about.story || {};
+      const storyKicker = pickFirst(story, ["kicker", "tagline", "label"]);
+      const storyTitle  = pickFirst(story, ["title", "heading"]);
+      const storyP1     = pickFirst(story, ["p1", "paragraph_1", "paragraph1", "text_1", "text1"]);
+      const storyP2     = pickFirst(story, ["p2", "paragraph_2", "paragraph2", "text_2", "text2"]);
+
+      if (storyKicker) setText("story_kicker", storyKicker);
+      if (storyTitle)  setText("story_title", storyTitle);
+      if (storyP1)     setText("story_p1", storyP1);
+      if (storyP2)     setText("story_p2", storyP2);
+
+      // SECTION EXTRA
+      const extra = about.section_extra || {};
+      const extraKicker = pickFirst(extra, ["kicker", "tagline", "label"]);
+      const extraTitle  = pickFirst(extra, ["title", "heading"]);
+      const extraP1     = pickFirst(extra, ["p1", "paragraph_1", "paragraph1", "text_1", "text1"]);
+      const extraP2     = pickFirst(extra, ["p2", "paragraph_2", "paragraph2", "text_2", "text2"]);
+      const extraImg    = pickFirst(extra, ["image_url", "img", "image", "bg", "bg_url", "photo_url"]);
+
+      if (extraKicker) setText("extra_kicker", extraKicker);
+      if (extraTitle)  setText("extra_title", extraTitle);
+      if (extraP1)     setText("extra_p1", extraP1);
+      if (extraP2)     setText("extra_p2", extraP2);
+      if (extraImg)    setImg("extra_img", extraImg);
+    }
+
     /* --- FORMATTERS --- */
     function formatTime(t) {
       if(!t) return "";
@@ -263,7 +338,6 @@
       return `${H12}:${m} ${ampm}`;
     }
 
-    // Sorter for text days
     const SORTER = { "sunday":0, "monday":1, "tuesday":2, "wednesday":3, "thursday":4, "friday":5, "saturday":6 };
     const DAYS = { "sunday":"Sun", "monday":"Mon", "tuesday":"Tue", "wednesday":"Wed", "thursday":"Thu", "friday":"Fri", "saturday":"Sat" };
 
@@ -276,14 +350,15 @@
     async function loadMonarchAbout() {
       if (!SLUG) return;
 
-      // 1. Business Info
+      // 1. Business Info (Only ID/Branding/Address)
+      // Removed 'bio' from select
       const { data: biz } = await sb.from("business")
-        .select("id, name, street_address, city, state, bio")
+        .select("id, name, street_address, city, state")
         .eq("slug", SLUG).maybeSingle();
       
       if (!biz) return;
 
-      // ✅ PATCH 4: Context & Engine
+      // Context & Engine
       nsSetBusinessContext(biz.id);
       await nsLoadBookingEngine();
 
@@ -306,12 +381,33 @@
         document.getElementById("map_frame").src = `http://googleusercontent.com/maps.google.com/maps?q=${q}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
       }
 
-      // Bio Injection
-      if (biz.bio && document.getElementById("bio_text")) {
-        document.getElementById("bio_text").textContent = biz.bio;
+      // 2) Follow pointer (business_sites_one) -> active template
+      let activeKey = "monarch_v1";
+      const { data: one, error: oneErr } = await sb
+        .from("business_sites_one")
+        .select("active_template_key")
+        .eq("business_id", biz.id)
+        .maybeSingle();
+
+      if (oneErr) console.error(oneErr);
+      if (one?.active_template_key) activeKey = one.active_template_key.trim();
+
+      // 3) Fetch active site row content
+      const { data: site, error: siteErr } = await sb
+        .from("business_sites")
+        .select("template_key, content_json")
+        .eq("business_id", biz.id)
+        .eq("template_key", activeKey)
+        .maybeSingle();
+
+      if (siteErr) console.error(siteErr);
+
+      // ✅ Content_json ONLY injection
+      if (site?.content_json) {
+        applyAboutCanonicalMonarch(site.content_json);
       }
 
-      // 2. Fetch Hours
+      // 4. Fetch Hours
       const { data: hours } = await sb.from("business_hours")
         .select("day_of_week, open_time, close_time, is_closed")
         .eq("business_id", biz.id);
