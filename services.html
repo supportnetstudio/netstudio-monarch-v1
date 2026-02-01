@@ -99,8 +99,8 @@
   <main class="container" style="padding-top: 60px;">
     
     <div class="text-center" style="margin-bottom: 40px;">
-      <span class="tagline">The Menu</span>
-      <h1 id="nsMenuTitle">Precision Grooming</h1>
+      <span class="tagline" id="nsServicesHeroLabel">The Menu</span>
+      <h1 id="nsServicesHeroTitle">Precision Grooming</h1>
     </div>
 
     <div id="nsCategoryList"></div>
@@ -110,7 +110,7 @@
   <footer>
     <div class="container">
       <div id="nsBrandFooter" style="font-weight:900; font-size:20px; font-style:italic; margin-bottom:10px;">MONARCH</div>
-      <p>© 2026 Monarch Hair Club. Powered by Net Studio.</p>
+      <p id="nsServicesFooterCopyright">© 2026 Monarch Hair Club. Powered by Net Studio.</p>
     </div>
   </footer>
 
@@ -191,6 +191,46 @@
       return data;
     }
 
+    // --- PATCH 2: Content Loader ---
+    async function nsLoadSiteContent() {
+      if (!window.BUSINESS_ID) return null;
+
+      // Monarch template key is fixed on this page
+      const { data, error } = await sb
+        .from("business_sites")
+        .select("content_json")
+        .eq("business_id", window.BUSINESS_ID)
+        .eq("template_key", "monarch_v1")
+        .maybeSingle();
+
+      if (error || !data) return null;
+      return data.content_json || null;
+    }
+
+    // --- PATCH 3: Content Applicator ---
+    function nsApplyServicesContent(content_json) {
+      const s = content_json?.services || null;
+      const foot = content_json?.footer || null; // Some templates put footer in root, some in page. Handling safe fallback.
+
+      const heroLabelEl = document.getElementById("nsServicesHeroLabel");
+      const heroTitleEl = document.getElementById("nsServicesHeroTitle");
+      const ftCopyrightEl = document.getElementById("nsServicesFooterCopyright");
+      const ftBrandEl = document.getElementById("nsBrandFooter"); // Handled in init, but can override here if needed
+
+      // Store UI strings for menu renderer
+      window.NS_SERVICES_UI = {
+        empty_state: s?.ui?.empty_state ?? "",
+        book_button_label: s?.ui?.book_button_label ?? "Book"
+      };
+
+      if (heroLabelEl) heroLabelEl.textContent = s?.hero?.label ?? "";
+      if (heroTitleEl) heroTitleEl.textContent = s?.hero?.title ?? "";
+      
+      // Footer might be in s.footer or root footer. We check s.footer first based on Canvas/Haven pattern
+      if (ftCopyrightEl && s?.footer?.copyright) ftCopyrightEl.textContent = s.footer.copyright;
+      if (ftBrandEl && s?.footer?.title) ftBrandEl.textContent = s.footer.title;
+    }
+
     async function nsLoadMenuItems() {
       if (!window.BUSINESS_ID) return [];
       const { data, error } = await sb
@@ -217,12 +257,24 @@
       return "";
     }
 
+    // --- Safety Escaper ---
+    function nsEscapeHtml(s) {
+      return String(s || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    // --- PATCH 4: Dynamic Renderer ---
     function nsRenderMenu(items) {
       const mount = document.getElementById("nsCategoryList");
       if (!mount) return;
 
       if (!items.length) {
-        mount.innerHTML = `<div style="opacity:.7; padding:20px 0;">No services found.</div>`;
+        // Use dynamic empty state
+        mount.innerHTML = `<div style="opacity:.7; padding:20px 0;">${nsEscapeHtml(window.NS_SERVICES_UI?.empty_state || "No services found.")}</div>`;
         return;
       }
 
@@ -233,6 +285,9 @@
       });
 
       mount.innerHTML = "";
+      
+      // Use dynamic button label
+      const btnLabel = nsEscapeHtml(window.NS_SERVICES_UI?.book_button_label || "Book");
 
       Object.entries(groups).forEach(([cat, rows]) => {
         const section = document.createElement("div");
@@ -240,20 +295,20 @@
 
         section.innerHTML = `
           <h3 style="color:var(--text-muted); font-size:12px; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:10px;">
-            ${cat}
+            ${nsEscapeHtml(cat)}
           </h3>
           <div class="menu-grid">
             ${rows.map(r => `
               <div class="menu-item" onclick="window.openBooking?.('${r.id}')">
                 <div class="item-info">
-                  <h3>${r.name || ""}</h3>
-                  <p>${r.description || ""}</p>
+                  <h3>${nsEscapeHtml(r.name)}</h3>
+                  <p>${nsEscapeHtml(r.description)}</p>
                 </div>
                 <div style="display:flex; align-items:center;">
-                  <span class="item-price">${nsMoneyFromRow(r)}</span>
+                  <span class="item-price">${nsEscapeHtml(nsMoneyFromRow(r))}</span>
                   <button type="button" class="book-mini"
                     onclick="event.stopPropagation(); window.openBooking?.('${r.id}')">
-                    Book
+                    ${btnLabel}
                   </button>
                 </div>
               </div>
@@ -271,11 +326,12 @@
       document.body.appendChild(s);
     }
 
+    // --- PATCH 5: Init Sequence ---
     (async () => {
       const biz = await nsLoadBusiness();
       if (!biz) return;
 
-      // PATCH 2: Apply Business Name to Top + Footer
+      // 1. Basic Branding (Logo/Name fallback)
       (function nsApplyBusinessName(biz){
         const name = (biz?.name || "").trim();
         if (!name) return;
@@ -287,6 +343,11 @@
         if (foot) foot.textContent = name.toUpperCase();
       })(biz);
 
+      // 2. Load & Apply JSON Content (Overrides branding if JSON exists)
+      const content = await nsLoadSiteContent();
+      nsApplyServicesContent(content);
+
+      // 3. Load Menu Items & Render
       const items = await nsLoadMenuItems();
       nsRenderMenu(items);
 
