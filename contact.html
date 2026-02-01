@@ -138,16 +138,16 @@
   <div class="contact-split">
     
     <div class="content-side">
-      <span class="tagline">Reach Out</span>
-      <h1>Get Connected</h1>
-      <p style="color:var(--text-muted); margin-bottom: 40px; max-width: 400px;">
+      <span class="tagline" id="ns_contact_hero_kicker">Reach Out</span>
+      <h1 id="ns_contact_hero_heading">Get Connected</h1>
+      <p id="ns_contact_hero_text" style="color:var(--text-muted); margin-bottom: 40px; max-width: 400px;">
         Appointments prioritized. Walk-ins accepted based on availability.
       </p>
 
       <div class="contact-row">
         <div class="icon-box"><i data-lucide="map-pin"></i></div>
         <div>
-          <h4 style="font-weight: 800; text-transform: uppercase;">Location</h4>
+          <h4 id="ns_contact_location_label" style="font-weight: 800; text-transform: uppercase;">Location</h4>
           <p id="contact_address" style="font-size: 14px; color: var(--text-muted);">Loading...</p>
         </div>
       </div>
@@ -155,7 +155,7 @@
       <div class="contact-row">
         <div class="icon-box"><i data-lucide="phone"></i></div>
         <div>
-          <h4 style="font-weight: 800; text-transform: uppercase;">Phone</h4>
+          <h4 id="ns_contact_phone_label" style="font-weight: 800; text-transform: uppercase;">Phone</h4>
           <p id="contact_phone" style="font-size: 14px; color: var(--text-muted);">—</p>
         </div>
       </div>
@@ -170,7 +170,7 @@
         <div class="input-group">
           <textarea id="frm_msg" class="input-field" rows="4" placeholder="Message" required></textarea>
         </div>
-        <button type="submit" class="btn">Send Message</button>
+        <button type="submit" class="btn" id="ns_contact_submit_btn">Send Message</button>
       </form>
     </div>
 
@@ -178,7 +178,7 @@
       <iframe id="map_frame" class="map-frame" src=""></iframe>
 
       <div class="info-overlay">
-        <h4 style="text-transform: uppercase; margin-bottom: 16px; font-weight: 800; color: var(--accent);">Operating Hours</h4>
+        <h4 id="ns_contact_hours_heading" style="text-transform: uppercase; margin-bottom: 16px; font-weight: 800; color: var(--accent);">Operating Hours</h4>
         
         <div id="hours_list">
           <div class="hour-row"><span>Loading...</span></div>
@@ -186,8 +186,8 @@
         
         <div style="margin-top: 20px; padding-top: 10px; border-top: 1px solid var(--border);">
             <p style="font-size: 11px; color: var(--text-muted); line-height: 1.4;">
-                <strong style="color:white;">Walk-In Policy:</strong><br>
-                Walk-ins are accepted but appointments take priority.
+                <strong id="ns_contact_walkin_heading" style="color:white;">Walk-In Policy:</strong><br>
+                <span id="ns_contact_walkin_text">Walk-ins are accepted but appointments take priority.</span>
             </p>
         </div>
       </div>
@@ -198,7 +198,7 @@
   <footer>
     <div class="container">
       <div id="footer_logo" style="font-weight:900; font-size:20px; font-style:italic; margin-bottom:10px;">MONARCH</div>
-      <p>© 2026 Monarch Hair Club. Powered by Net Studio.</p>
+      <p id="ns_footer_copyright">© 2026 Monarch Hair Club. Powered by Net Studio.</p>
     </div>
   </footer>
 
@@ -218,7 +218,6 @@
       return null;
     }
 
-    // ✅ PATCH 2: Context Helper
     function nsSetBusinessContext(businessId) {
       if (!businessId) return;
       window.NS_BUSINESS_ID = businessId;
@@ -237,7 +236,6 @@
       } catch(e) {}
     }
 
-    // ✅ PATCH 3: Dynamic Script Loader
     function nsLoadBookingEngine() {
       return new Promise((resolve) => {
         if (window.openBooking || (window.NetStudio && typeof window.NetStudio.open === "function")) return resolve(true);
@@ -260,8 +258,52 @@
       return `${H12}:${m} ${ampm}`;
     }
 
-    // Sorter for text days
     const SORTER = { "sunday":0, "monday":1, "tuesday":2, "wednesday":3, "thursday":4, "friday":5, "saturday":6 };
+
+    /* --- CONTENT LOADER PATCH --- */
+    async function nsLoadMonarchContactContent(businessId){
+      try{
+        const { data: site, error } = await sb
+          .from("business_sites")
+          .select("content_json")
+          .eq("business_id", businessId)
+          .eq("template_key", "monarch_v1")
+          .maybeSingle();
+        if (error || !site?.content_json) return null;
+        return site.content_json?.contact || null;
+      } catch(e){
+        return null;
+      }
+    }
+
+    function nsApplyMonarchContactContent(contact){
+      if (!contact) return;
+
+      const k = contact?.hero?.kicker;
+      const h = contact?.hero?.heading;
+      const t = contact?.hero?.text;
+
+      if (k && document.getElementById("ns_contact_hero_kicker")) document.getElementById("ns_contact_hero_kicker").textContent = k;
+      if (h && document.getElementById("ns_contact_hero_heading")) document.getElementById("ns_contact_hero_heading").textContent = h;
+      if (t && document.getElementById("ns_contact_hero_text")) document.getElementById("ns_contact_hero_text").textContent = t;
+
+      const info = contact?.info || {};
+      if (info.location_label && document.getElementById("ns_contact_location_label")) document.getElementById("ns_contact_location_label").textContent = info.location_label;
+      if (info.phone_label && document.getElementById("ns_contact_phone_label")) document.getElementById("ns_contact_phone_label").textContent = info.phone_label;
+
+      if (info.hours_heading && document.getElementById("ns_contact_hours_heading")) document.getElementById("ns_contact_hours_heading").textContent = info.hours_heading;
+      if (info.walkin_heading && document.getElementById("ns_contact_walkin_heading")) document.getElementById("ns_contact_walkin_heading").textContent = info.walkin_heading;
+      if (info.walkin_text && document.getElementById("ns_contact_walkin_text")) document.getElementById("ns_contact_walkin_text").textContent = info.walkin_text;
+
+      const form = contact?.form || {};
+      if (form.name_placeholder && document.getElementById("frm_name")) document.getElementById("frm_name").setAttribute("placeholder", form.name_placeholder);
+      if (form.email_placeholder && document.getElementById("frm_email")) document.getElementById("frm_email").setAttribute("placeholder", form.email_placeholder);
+      if (form.message_placeholder && document.getElementById("frm_msg")) document.getElementById("frm_msg").setAttribute("placeholder", form.message_placeholder);
+      if (form.submit_label && document.getElementById("ns_contact_submit_btn")) document.getElementById("ns_contact_submit_btn").textContent = form.submit_label;
+
+      const cp = contact?.footer?.copyright;
+      if (cp && document.getElementById("ns_footer_copyright")) document.getElementById("ns_footer_copyright").textContent = cp;
+    }
 
     /* --- DATA LOAD --- */
     const SB_URL = "https://jdvdgvolfmvlgyfklbwe.supabase.co";
@@ -270,29 +312,31 @@
     const SLUG = nsGetSlug();
 
     let businessEmail = ""; 
+    let contactContent = null;
 
     async function loadMonarchContact() {
       if (!SLUG) return;
 
-      // 1. Business Info
       const { data: biz } = await sb.from("business")
         .select("id, name, street_address, city, state, phone, owner_email")
         .eq("slug", SLUG).maybeSingle();
       
       if (!biz) return;
 
-      // ✅ PATCH 4: Context & Engine
       nsSetBusinessContext(biz.id);
       await nsLoadBookingEngine();
 
-      // Branding
+      // Content Load
+      contactContent = await nsLoadMonarchContactContent(biz.id);
+      nsApplyMonarchContactContent(contactContent);
+
+      // Branding fallback
       if (biz.name) {
         const n = biz.name.toUpperCase();
         if(document.getElementById("nav_logo")) document.getElementById("nav_logo").textContent = n;
         if(document.getElementById("footer_logo")) document.getElementById("footer_logo").textContent = n;
       }
 
-      // Address & Phone
       const address = (biz.street_address && biz.city) 
         ? `${biz.street_address}, ${biz.city}, ${biz.state}`
         : "Address Loading...";
@@ -304,23 +348,19 @@
         document.getElementById("contact_phone").textContent = biz.phone || "—";
       }
 
-      // Map Embed (Google Maps)
       if (address !== "Address Loading...") {
         const q = encodeURIComponent(address);
         document.getElementById("map_frame").src = `http://googleusercontent.com/maps.google.com/maps?q=${q}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
       }
 
-      // Email Store
       businessEmail = biz.owner_email || "";
 
-      // 2. Fetch Hours
       const { data: hours } = await sb.from("business_hours")
         .select("day_of_week, open_time, close_time, is_closed")
         .eq("business_id", biz.id);
 
       const listEl = document.getElementById("hours_list");
       if (hours && hours.length > 0) {
-        // Sort
         hours.sort((a, b) => SORTER[a.day_of_week] - SORTER[b.day_of_week]);
 
         let html = "";
@@ -334,7 +374,8 @@
         });
         listEl.innerHTML = html;
       } else {
-        listEl.innerHTML = `<div class="hour-row"><span>Hours not set</span></div>`;
+        const hf = (contactContent?.info?.hours_fallback) || "Hours not set";
+        listEl.innerHTML = `<div class="hour-row"><span>${hf}</span></div>`;
       }
     }
 
@@ -345,12 +386,14 @@
         alert("No contact email found.");
         return;
       }
-      const name = document.querySelector("#contact_form input[type='text']").value;
-      const email = document.querySelector("#contact_form input[type='email']").value;
-      const msg = document.querySelector("#contact_form textarea").value;
+      const name = document.getElementById("frm_name").value;
+      const email = document.getElementById("frm_email").value;
+      const msg = document.getElementById("frm_msg").value;
 
       const body = `Name: ${name}%0D%0AEmail: ${email}%0D%0A%0D%0A${msg}`;
-      window.location.href = `mailto:${businessEmail}?subject=New Inquiry&body=${body}`;
+      const subject = encodeURIComponent((contactContent?.form?.mailto_subject) || "New Inquiry");
+      
+      window.location.href = `mailto:${businessEmail}?subject=${subject}&body=${body}`;
     });
 
     loadMonarchContact();
