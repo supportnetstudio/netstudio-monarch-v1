@@ -154,7 +154,15 @@
       }
 
       function apply(data, biz, images) {
-        const g = data.gallery || {};
+        // --- Gallery: strict JSON contract ---
+        // content_json.gallery = { kicker, heading, text }
+        const g = (data && data.gallery) ? data.gallery : {};
+
+        if ($("gallery_kicker")) $("gallery_kicker").textContent = pick(g.kicker, "The Portfolio");
+        if ($("gallery_heading")) $("gallery_heading").textContent = pick(g.heading, "Fresh Cuts Only.");
+        if ($("gallery_text")) $("gallery_text").textContent = pick(g.text, "Real clients. Real results.");
+
+        // --- Core Business Data ---
         const bName = biz.name || "MONARCH";
         if($("nav_logo")) $("nav_logo").textContent = bName.toUpperCase();
         if($("footer_logo")) $("footer_logo").textContent = bName.toUpperCase();
@@ -163,10 +171,7 @@
         const addr = [biz.street_address, biz.city, biz.state].filter(Boolean).join(", ");
         if($("ns_address")) $("ns_address").textContent = addr;
 
-        if($("gallery_kicker")) $("gallery_kicker").textContent = pick(g.kicker, "The Portfolio");
-        if($("gallery_heading")) $("gallery_heading").textContent = pick(g.heading, "Fresh Cuts Only.");
-        if($("gallery_text")) $("gallery_text").textContent = pick(g.text, "Real clients. Real results.");
-
+        // --- Gallery Image Logic ---
         const teamArray = Array.isArray(biz.team_json) ? biz.team_json : [];
         window.__TEAM_MAP__ = new Map(teamArray.map(m => [m.id || m.uuid, m.name || m.display_name]));
         window.__GALLERY_DATA__ = images;
