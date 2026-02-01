@@ -114,13 +114,11 @@
   </nav>
 
   <main class="container" style="padding-top: 60px;">
-    
+
     <div class="text-center" style="max-width: 600px;">
-      <span class="tagline">Meet The Team</span>
-      <h1>The Squad</h1>
-      <p style="color:var(--text-muted);">
-        We blend experience with comfort. A space where students, locals, and military members get reliable service without the hassle.
-      </p>
+      <span class="tagline" id="team_hero_kicker">Meet The Team</span>
+      <h1 id="team_hero_heading">The Squad</h1>
+      <p id="team_hero_text" style="color:var(--text-muted);"></p>
     </div>
 
     <div class="team-grid" id="team_grid">
@@ -132,7 +130,7 @@
   <footer>
     <div class="container">
       <div id="footer_logo" style="font-weight:900; font-size:20px; font-style:italic; margin-bottom:10px;">MONARCH</div>
-      <p>© 2026 Monarch Hair Club. Powered by Net Studio.</p>
+      <p id="footer_copy"></p>
     </div>
   </footer>
 
@@ -290,6 +288,35 @@
         }
         if (footerLogo) footerLogo.textContent = name;
       }
+
+      // ✅ Hero + Footer copy from content_json (monarch_v1)
+      try {
+        const { data: site } = await sb
+          .schema("public")
+          .from("business_sites")
+          .select("content_json")
+          .eq("business_id", biz.id)
+          .eq("template_key", "monarch_v1")
+          .maybeSingle();
+
+        const hero = site?.content_json?.team?.hero || {};
+        const footer = site?.content_json?.footer || {};
+
+        const kicker = String(hero.kicker ?? "Meet The Team").trim();
+        const heading = String(hero.heading ?? "The Squad").trim();
+        const text = String(hero.text ?? "").trim();
+
+        const elK = document.getElementById("team_hero_kicker");
+        const elH = document.getElementById("team_hero_heading");
+        const elT = document.getElementById("team_hero_text");
+        if (elK) elK.textContent = kicker;
+        if (elH) elH.textContent = heading;
+        if (elT) elT.textContent = text;
+
+        const elF = document.getElementById("footer_copy");
+        const copy = String(footer.copyright ?? "© 2026 Monarch Hair Club. Powered by Net Studio.").trim();
+        if (elF) elF.textContent = copy;
+      } catch(e) {}
 
       // ✅ RULE: only team members that are active AND logged in
       const { data: members, error: mErr } = await sb
