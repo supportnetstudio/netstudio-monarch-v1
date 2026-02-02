@@ -59,9 +59,9 @@
     }
     .brand { font-weight: 900; font-size: 20px; letter-spacing: -0.05em; font-style: italic; }
     
+    /* --- HERO (PATCHED: NO IMAGE) --- */
     .hero {
       min-height: 85vh; display: flex; align-items: center;
-      background-size: cover; background-position: center;
       border-bottom: 1px solid var(--border);
     }
     .hero-content { max-width: 600px; }
@@ -182,7 +182,7 @@
     (() => {
       const $ = (id) => document.getElementById(id);
       const pick = (...vals) => vals.find(v => v !== undefined && v !== null && String(v).trim() !== "") || "";
-      const BLANK_IMG = "data:image/gif;base64,R0lGODlhAQABAAAAACw="; // ✅ Fix 3: Image fallback
+      const BLANK_IMG = "data:image/gif;base64,R0lGODlhAQABAAAAACw=";
 
       function nsDetectSlugProdOnly() {
         const ROOT = "netstudiodevelopment.com";
@@ -233,13 +233,11 @@
         if ($("nav_logo")) $("nav_logo").textContent = bName;
         if ($("footer_logo")) $("footer_logo").textContent = bName;
         
-        // ✅ Fix 2: Footer copy undefined check
         if ($("footer_copy")) {
           $("footer_copy").textContent = `© ${new Date().getFullYear()} ${pick(biz.name, bName)}. Powered by Net Studio.`;
         }
 
-        const hBg = pick(hero.bg, hero.bg_image, biz.hero_bg_url, "https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&q=80&w=2000");
-        if ($("ns_hero")) $("ns_hero").style.backgroundImage = `linear-gradient(to right, rgba(0,0,0,0.8), rgba(0,0,0,0.4)), url('${hBg}')`;
+        // PATCHED: Hero background image logic removed here.
         
         if ($("hero_kicker")) $("hero_kicker").textContent = pick(hero.kicker, "Norfolk's Premier Studio");
         if ($("hero_headline")) $("hero_headline").innerHTML = pick(hero.headline, "Premium Cuts.<br>Fair Prices.");
@@ -276,7 +274,6 @@
         if ($("biz_address")) $("biz_address").textContent = address;
         if ($("biz_phone")) $("biz_phone").textContent = biz.phone || "";
         
-        // ✅ Fix 1: Map URL construction
         if ($("map_frame")) {
           $("map_frame").src = `https://maps.google.com/maps?q=${encodeURIComponent(address)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
         }
@@ -308,7 +305,6 @@
           if (team.length === 0) {
             $("team_scroll").innerHTML = `<div style="color:var(--text-muted); font-size:13px; width:100%; text-align:center;">Loading...</div>`;
           } else {
-            // ✅ Fix 3: Image fallback logic
             $("team_scroll").innerHTML = team.map(m => {
               const img = pick(m.profile_image_url, BLANK_IMG);
               const role = pick(m.role, "");
