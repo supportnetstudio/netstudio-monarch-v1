@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -75,24 +74,14 @@
 
     /* --- CONTENT BLOCKS --- */
     .split-section {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 60px; 
+      display: grid; grid-template-columns: 1fr; gap: 40px; 
       padding: 80px 0; border-bottom: 1px solid var(--border); align-items: center;
     }
-    .split-reverse { direction: rtl; } 
-    .split-reverse > * { direction: ltr; }
     
     @media(max-width: 768px) { 
-      .split-section { grid-template-columns: 1fr; gap: 40px; padding: 60px 0; }
-      .split-reverse { direction: ltr; }
-      .img-frame { order: -1; }
+      .split-section { padding: 60px 0; }
     }
 
-    .img-frame {
-      width: 100%; aspect-ratio: 4/3; background: #222; 
-      position: relative; border: 1px solid var(--border);
-    }
-    .img-frame img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); }
-    
     /* "EST 2021" Badge */
     .est-badge {
       display: inline-block; padding: 8px 16px; border: 1px solid var(--accent);
@@ -149,12 +138,9 @@
           It's about the experience.
         </p>
       </div>
-      <div class="img-frame">
-        <img id="about_img" src="https://images.unsplash.com/photo-1532710093739-9470acff878f?auto=format&fit=crop&q=80&w=800" alt="Barber Chair">
-      </div>
     </div>
 
-    <div class="split-section split-reverse">
+    <div class="split-section">
       <div>
         <span class="tagline" id="extra_kicker">The Shop</span>
         <h2 id="extra_title">Heart of Norfolk</h2>
@@ -166,9 +152,6 @@
           Our space blends classic barber traditions with a modern touch. Whether you're here 
           for a sharp fade, a clean shave, or just to talk sports and life—Monarch is always ready for you.
         </p>
-      </div>
-      <div class="img-frame">
-        <img id="extra_img" src="https://images.unsplash.com/photo-1503951914875-befbb711ed3e?auto=format&fit=crop&q=80&w=800" alt="Shop Interior">
       </div>
     </div>
 
@@ -271,14 +254,6 @@
       el.innerHTML = s;
     }
 
-    function setImg(id, url){
-      const el = document.getElementById(id);
-      if (!el) return;
-      const s = (url || "").toString().trim();
-      if (!s) return;
-      el.src = s;
-    }
-
     function pickFirst(obj, keys){
       if (!obj) return "";
       for (const k of keys) {
@@ -296,11 +271,9 @@
       const hero = about.hero || {};
       const heroHeading = pickFirst(hero, ["heading", "title", "h1"]);
       const heroText    = pickFirst(hero, ["text", "subtitle", "lead", "body", "description"]);
-      const heroImg     = pickFirst(hero, ["image_url", "img", "image", "bg", "bg_url", "photo_url"]);
 
       if (heroHeading) setHTML("about_heading", heroHeading);
       if (heroText) setHTML("bio_text", heroText);
-      if (heroImg) setImg("about_img", heroImg);
 
       // STORY
       const story = about.story || {};
@@ -320,13 +293,11 @@
       const extraTitle  = pickFirst(extra, ["title", "heading"]);
       const extraP1     = pickFirst(extra, ["p1", "paragraph_1", "paragraph1", "text_1", "text1"]);
       const extraP2     = pickFirst(extra, ["p2", "paragraph_2", "paragraph2", "text_2", "text2"]);
-      const extraImg    = pickFirst(extra, ["image_url", "img", "image", "bg", "bg_url", "photo_url"]);
 
       if (extraKicker) setText("extra_kicker", extraKicker);
       if (extraTitle)  setText("extra_title", extraTitle);
       if (extraP1)     setText("extra_p1", extraP1);
       if (extraP2)     setText("extra_p2", extraP2);
-      if (extraImg)    setImg("extra_img", extraImg);
     }
 
     /* --- FORMATTERS --- */
@@ -351,19 +322,15 @@
     async function loadMonarchAbout() {
       if (!SLUG) return;
 
-      // 1. Business Info (Only ID/Branding/Address)
-      // Removed 'bio' from select
       const { data: biz } = await sb.from("business")
         .select("id, name, street_address, city, state")
         .eq("slug", SLUG).maybeSingle();
       
       if (!biz) return;
 
-      // Context & Engine
       nsSetBusinessContext(biz.id);
       await nsLoadBookingEngine();
 
-      // Branding
       if (biz.name) {
         const n = biz.name.toUpperCase();
         if(document.getElementById("nav_logo")) document.getElementById("nav_logo").textContent = n;
@@ -371,7 +338,6 @@
         if(document.getElementById("footer_copy")) document.getElementById("footer_copy").textContent = `© ${new Date().getFullYear()} ${biz.name}. Powered by Net Studio.`;
       }
 
-      // Address & Map
       const address = [biz.street_address, biz.city, biz.state].filter(Boolean).join(", ");
       if(document.getElementById("contact_address")) {
         document.getElementById("contact_address").innerHTML = address.replace(", ", "<br>");
@@ -382,33 +348,26 @@
         document.getElementById("map_frame").src = `http://googleusercontent.com/maps.google.com/maps?q=${q}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
       }
 
-      // 2) Follow pointer (business_sites_one) -> active template
       let activeKey = "monarch_v1";
-      const { data: one, error: oneErr } = await sb
+      const { data: one } = await sb
         .from("business_sites_one")
         .select("active_template_key")
         .eq("business_id", biz.id)
         .maybeSingle();
 
-      if (oneErr) console.error(oneErr);
       if (one?.active_template_key) activeKey = one.active_template_key.trim();
 
-      // 3) Fetch active site row content
-      const { data: site, error: siteErr } = await sb
+      const { data: site } = await sb
         .from("business_sites")
         .select("template_key, content_json")
         .eq("business_id", biz.id)
         .eq("template_key", activeKey)
         .maybeSingle();
 
-      if (siteErr) console.error(siteErr);
-
-      // ✅ Content_json ONLY injection
       if (site?.content_json) {
         applyAboutCanonicalMonarch(site.content_json);
       }
 
-      // 4. Fetch Hours
       const { data: hours } = await sb.from("business_hours")
         .select("day_of_week, open_time, close_time, is_closed")
         .eq("business_id", biz.id);
