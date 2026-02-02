@@ -2,8 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Monarch — About Us</title>
+  <title>The Haven — Our Story</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 
   <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -18,190 +22,251 @@
   <style>
     /* --- CORE VARIABLES --- */
     :root {
-      --bg-body: #0a0a0a;
-      --bg-card: #141414;
-      --text-main: #ffffff;
-      --text-muted: #a1a1aa;
-      --accent: #ef4444; /* Neon Red */
-      --border: rgba(255, 255, 255, 0.1);
-      --font-body: 'Inter', sans-serif;
+      --bg-body: #FDFBF7; 
+      --bg-alt: #F3EFE7; 
+      --text-main: #3D3A36; 
+      --text-muted: #8C8680;
+      --accent: #B08968; 
+      --font-heading: 'Playfair Display', serif;
+      --font-body: 'Lato', sans-serif;
     }
 
     /* --- RESET --- */
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    
     body {
       background: var(--bg-body);
       color: var(--text-main);
       font-family: var(--font-body);
       line-height: 1.6;
-      overflow-x: hidden;
     }
 
+    /* --- TYPOGRAPHY --- */
+    h1, h2, h3 { font-family: var(--font-heading); font-weight: 400; color: #2C2926; }
+    h1 { font-size: clamp(36px, 5vw, 64px); line-height: 1.1; margin-bottom: 20px; }
+    h2 { font-size: 32px; margin-bottom: 16px; }
+    
+    .subtitle {
+      font-family: var(--font-body); font-size: 10px; letter-spacing: 0.2em; 
+      text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 12px;
+    }
+    .lead-text { font-size: 18px; font-weight: 300; color: var(--text-main); max-width: 700px; margin: 0 auto; }
+
     /* --- UTILITIES --- */
-    .container { max-width: 1000px; margin: 0 auto; padding: 0 24px; }
+    .container { max-width: 1000px; margin: 0 auto; padding: 0 40px; }
+    .section-pad { padding: 80px 0; }
+    
+    @media(max-width: 768px) {
+      .container { padding: 0 24px; }
+      .section-pad { padding: 50px 0; }
+    }
     
     .btn {
-      display: inline-flex; background: var(--accent); color: white;
-      padding: 12px 24px; font-weight: 800; text-transform: uppercase; font-size: 11px;
-      letter-spacing: 0.05em; text-decoration: none; border-radius: 4px;
-      transition: 0.2s; border: none; cursor: pointer;
+      display: inline-block; background: #2C2926; color: white;
+      padding: 12px 28px; border-radius: 50px; text-decoration: none;
+      font-size: 12px; letter-spacing: 0.05em; transition: 0.3s;
+      cursor: pointer; border: none;
     }
-    .btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
-    
-    h1 { font-size: 42px; font-weight: 900; letter-spacing: -0.04em; text-transform: uppercase; margin-bottom: 20px; line-height: 1; }
-    h2 { font-size: 28px; font-weight: 800; text-transform: uppercase; margin-bottom: 16px; }
-    
-    .tagline { color: var(--accent); font-weight: 800; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; display: block; margin-bottom: 12px; }
-    .text-body { color: var(--text-muted); font-size: 15px; margin-bottom: 20px; }
+    .btn:hover { background: var(--accent); transform: translateY(-2px); }
 
     /* --- NAVIGATION --- */
     nav {
-      position: sticky; top: 0; width: 100%; padding: 20px 24px; z-index: 50;
-      background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      display: flex; justify-content: space-between; align-items: center;
+      padding: 20px 40px; display: flex; justify-content: space-between; align-items: center;
     }
-    .brand { font-weight: 900; font-size: 20px; letter-spacing: -0.05em; font-style: italic; color: white; text-decoration: none; }
-    .nav-links { display: flex; gap: 24px; }
-    .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 12px; font-weight: 700; text-transform: uppercase; transition: 0.2s; }
-    .nav-links a:hover, .nav-links a.active { color: white; }
-    @media(max-width: 768px) { .nav-links { display: none; } }
-
-    /* --- HERO --- */
-    .page-hero {
-      padding: 100px 0 60px; border-bottom: 1px solid var(--border);
-    }
-
-    /* --- CONTENT BLOCKS --- */
-    .split-section {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 60px; 
-      padding: 80px 0; border-bottom: 1px solid var(--border); align-items: center;
-    }
-    .split-reverse { direction: rtl; } 
-    .split-reverse > * { direction: ltr; }
+    .logo { font-family: var(--font-heading); font-size: 24px; font-weight: 600; letter-spacing: -0.02em; font-style: italic; }
+    .nav-links { display: flex; gap: 40px; }
+    .nav-links a { color: var(--text-main); text-decoration: none; font-size: 14px; }
     
     @media(max-width: 768px) { 
-      .split-section { grid-template-columns: 1fr; gap: 40px; padding: 60px 0; }
-      .split-reverse { direction: ltr; }
-      .img-frame { order: -1; }
+        nav { padding: 15px 20px; }
+        .nav-links { display: none; } 
     }
 
-    .img-frame {
-      width: 100%; aspect-ratio: 4/3; background: #222; 
-      position: relative; border: 1px solid var(--border);
+    /* --- STORY HERO --- */
+    .story-hero { text-align: center; padding: 60px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+
+    /* --- SPLIT LAYOUT --- */
+    .split-section {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
+      margin-top: 60px;
     }
-    .img-frame img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); }
+    .split-reverse { direction: rtl; }
+    .split-reverse > * { direction: ltr; }
     
-    /* "EST 2021" Badge */
-    .est-badge {
-      display: inline-block; padding: 8px 16px; border: 1px solid var(--accent);
-      color: var(--accent); font-weight: 800; font-size: 12px; margin-bottom: 20px;
-      letter-spacing: 0.1em;
+    .img-frame {
+      width: 100%; aspect-ratio: 3/4; border-radius: 200px 200px 0 0; overflow: hidden;
+    }
+    .img-frame img { width: 100%; height: 100%; object-fit: cover; }
+    
+    @media(max-width: 768px) {
+      .split-section { grid-template-columns: 1fr; gap: 30px; margin-top: 40px; }
+      .split-reverse { direction: ltr; }
+      .img-frame { order: -1; aspect-ratio: 16/9; border-radius: 12px; }
     }
 
-    /* --- MAP SECTION --- */
-    .map-section { padding: 80px 0; text-align: center; }
-    .map-frame {
-      width: 100%; height: 400px; background: #222; margin-top: 40px;
-      border: 1px solid var(--border); filter: grayscale(100%);
+    /* --- VALUES GRID --- */
+    .values-bg { background: var(--bg-alt); padding: 80px 0; margin-top: 80px; }
+    .values-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; text-align: center; }
+    @media(max-width: 768px) { 
+        .values-bg { padding: 50px 0; margin-top: 50px; }
+        .values-grid { grid-template-columns: 1fr; gap: 30px; } 
+    }
+
+    /* --- TEAM --- */
+    .team-grid { 
+        display: grid; 
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
+        gap: 40px; margin-top: 40px; 
+    }
+    .team-card { text-align: center; display: flex; flex-direction: column; align-items: center; }
+    
+    .team-img-wrap {
+      width: 140px; height: 140px; border-radius: 50%; overflow: hidden; margin-bottom: 15px;
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+    .team-img { 
+        width: 100%; height: 100%; object-fit: cover; 
+        filter: grayscale(100%); transition: 0.4s;
+    }
+    .team-card:hover .team-img { filter: grayscale(0%); }
+    
+    .team-role { font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; display: block; margin-bottom: 16px; }
+
+    /* ACTION BUTTONS */
+    .action-row {
+      display: flex; gap: 8px; justify-content: center; width: 100%;
+    }
+    .btn-sm {
+      background: #2C2926; color: white; border: 1px solid #2C2926;
+      padding: 8px 16px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em;
+      border-radius: 50px; cursor: pointer; transition: 0.2s;
+    }
+    .btn-outline-sm {
+      background: transparent; color: #2C2926; border: 1px solid #2C2926;
+      padding: 8px 16px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em;
+      border-radius: 50px; cursor: pointer; transition: 0.2s;
+    }
+    .btn-sm:hover { background: var(--accent); border-color: var(--accent); }
+    .btn-outline-sm:hover { border-color: var(--accent); color: var(--accent); }
+
+    @media(max-width: 768px) {
+        .team-grid { grid-template-columns: 1fr 1fr; gap: 20px; padding: 0 10px; }
+        .team-img-wrap { width: 100px; height: 100px; }
+        .team-card h3 { font-size: 15px; margin-bottom: 2px; }
+        .team-role { font-size: 9px; margin-bottom: 12px; }
+        .action-row { flex-direction: column; gap: 6px; width: 100%; } 
+        .btn-sm, .btn-outline-sm { width: 100%; }
     }
 
     /* --- FOOTER --- */
-    footer { border-top: 1px solid var(--border); padding: 40px 0; text-align: center; color: var(--text-muted); font-size: 12px; }
+    footer { padding: 60px 0 30px; text-align: center; color: var(--text-muted); font-size: 12px; }
 
   </style>
 </head>
 <body>
 
   <nav>
-    <a href="index.html" class="brand" id="nav_logo">MONARCH</a>
+    <div class="logo" id="nav_logo">The Haven</div>
     <div class="nav-links">
       <a href="index.html">Home</a>
       <a href="services.html">Services</a>
-      <a href="team.html">The Squad</a>
-      <a href="about.html" class="active">About</a>
+      <a href="about.html" class="active">Our Story</a>
+      <a href="contact.html">Contact</a>
     </div>
-    <a href="#book" class="btn" onclick="window.nsOpenBooking(); return false;">Book Now</a>
+    <a href="#book" class="btn" onclick="window.nsOpenBooking(); return false;">Book</a>
   </nav>
+
+  <header class="container story-hero">
+    <span class="subtitle" id="about_kicker">Est. 2021</span>
+    <h1 id="about_heading">A Sanctuary for <br>Self-Care.</h1>
+    <p class="lead-text" id="about_text">
+      The Haven was born from a desire to slow down. In a world that rushes, 
+      we created a space where beauty is a ritual, not a race.
+    </p>
+  </header>
 
   <main class="container">
     
-    <div class="page-hero">
-      <div class="est-badge">EST. 2021</div>
-      <h1 id="about_heading">Authentic<br>Norfolk Spirit.</h1>
-      <p class="text-body" style="max-width: 500px; font-size: 18px; color: white;" id="bio_text">
-        The Monarch Hair Club isn't just where you get lined up, it's where you feel at home.
-      </p>
-    </div>
-
     <div class="split-section">
-      <div>
-        <span class="tagline" id="story_kicker">Our Story</span>
-        <h2 id="story_title">More Than A Cut</h2>
-        <p class="text-body" id="story_p1">
-          For years, our chair has been a place for conversation, connection, and community. 
-          From catching up on the latest news to sharing life stories, this is where people come 
-          to relax, laugh, and walk out feeling confident.
-        </p>
-        <p class="text-body" id="story_p2">
-          We are built on the belief that a fresh cut isn't just about the look. 
-          It's about the experience.
-        </p>
-      </div>
       <div class="img-frame">
-        <img id="about_img" src="https://images.unsplash.com/photo-1532710093739-9470acff878f?auto=format&fit=crop&q=80&w=800" alt="Barber Chair">
+        <img id="about_image" src="https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&q=80&w=800" alt="Salon Interior">
+      </div>
+      <div>
+        <span class="subtitle" id="story_kicker">The Vision</span>
+        <h2 id="story_title">Holistic Beauty</h2>
+        <p id="story_p1" style="color:var(--text-muted); margin-bottom: 20px;">
+          We believe that healthy hair starts with a healthy environment. That implies 
+          using organic, low-toxin color lines and sustainable products that nourish 
+          rather than strip.
+        </p>
+        <p id="story_p2" style="color:var(--text-muted);">
+          Our studio is designed as a calm respite—neutral tones, natural light, 
+          and quiet corners. It is a place to exhale.
+        </p>
       </div>
     </div>
 
     <div class="split-section split-reverse">
+      <div class="img-frame" style="border-radius: 0 0 200px 200px;">
+        <img id="extra_image" src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&q=80&w=800" alt="Hair Texture">
+      </div>
       <div>
-        <span class="tagline" id="extra_kicker">The Shop</span>
-        <h2 id="extra_title">Heart of Norfolk</h2>
-        <p class="text-body" id="extra_p1">
-          Right here on Colley Ave, The Monarch Hair Club is known for its welcoming atmosphere 
-          and top-notch service.
+        <span class="subtitle" id="extra_kicker">The Craft</span>
+        <h2 id="extra_title">Artistry & Patience</h2>
+        <p id="extra_p1" style="color:var(--text-muted); margin-bottom: 20px;">
+          Great color takes time. Our stylists are trained in "Lived-In" techniques 
+          that allow your hair to grow out seamlessly, extending the life of your color 
+          and maintaining the integrity of your strands.
         </p>
-        <p class="text-body" id="extra_p2">
-          Our space blends classic barber traditions with a modern touch. Whether you're here 
-          for a sharp fade, a clean shave, or just to talk sports and life—Monarch is always ready for you.
+        <p id="extra_p2" style="color:var(--text-muted);">
+          We don't double book. When you are in our chair, you have our undivided attention.
         </p>
       </div>
-      <div class="img-frame">
-        <img id="extra_img" src="https://images.unsplash.com/photo-1503951914875-befbb711ed3e?auto=format&fit=crop&q=80&w=800" alt="Shop Interior">
-      </div>
-    </div>
-
-    <div class="map-section">
-      <span class="tagline">The Community</span>
-      <h2>Built For The People</h2>
-      <p class="text-body" style="max-width: 600px; margin: 0 auto;">
-        We pride ourselves on being a spot where everyone is welcome. 
-        It's a second home. Every cut comes with good vibes, good company, and that authentic Norfolk spirit.
-      </p>
-
-      <div class="map-frame">
-        <iframe id="map_frame" width="100%" height="100%" frameborder="0" style="border:0" src=""></iframe>
-      </div>
-      
-      <div style="margin-top: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: left; max-width: 600px; margin-left: auto; margin-right: auto;">
-        <div>
-            <h4 style="color:white; margin-bottom:8px;">Location</h4>
-            <p class="text-body" style="font-size:14px;" id="contact_address">Loading Address...</p>
-        </div>
-        <div>
-            <h4 style="color:white; margin-bottom:8px;">Hours</h4>
-            <p class="text-body" style="font-size:14px;" id="contact_hours">Loading Hours...</p>
-        </div>
-      </div>
-
     </div>
 
   </main>
 
+  <div class="values-bg">
+    <div class="container">
+      <div class="values-grid">
+        <div>
+          <h3 id="value_1_title" style="font-size: 22px; margin-bottom: 12px;">Organic First</h3>
+          <p id="value_1_text" style="font-size: 13px; color: var(--text-muted);">
+            We prioritize ammonia-free color and cruelty-free products.
+          </p>
+        </div>
+        <div>
+          <h3 id="value_2_title" style="font-size: 22px; margin-bottom: 12px;">Inclusive Space</h3>
+          <p id="value_2_text" style="font-size: 13px; color: var(--text-muted);">
+            All textures, all backgrounds, all people are celebrated here.
+          </p>
+        </div>
+        <div>
+          <h3 id="value_3_title" style="font-size: 22px; margin-bottom: 12px;">Transparent Pricing</h3>
+          <p id="value_3_text" style="font-size: 13px; color: var(--text-muted);">
+            No surprise add-ons. Our session-based pricing is clear.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container section-pad">
+    <div style="text-align: center; margin-bottom: 40px;">
+      <span class="subtitle" id="team_kicker">The Collective</span>
+      <h2 id="team_heading">Meet The Artisans</h2>
+    </div>
+
+    <div class="team-grid" id="team_grid">
+      <div style="grid-column:1/-1; text-align:center; padding:40px; color:#999;">Loading artisans...</div>
+    </div>
+  </div>
+
   <footer>
     <div class="container">
-      <div id="footer_logo" style="font-weight:900; font-size:20px; font-style:italic; margin-bottom:10px;">MONARCH</div>
-      <p id="footer_copy">© 2026 Monarch Hair Club. Powered by Net Studio.</p>
+      <div id="footer_logo" style="font-family: var(--font-heading); font-size: 24px; margin-bottom: 20px;">The Haven</div>
+      <p id="ns_address" style="margin-bottom: 20px;"></p>
+      <p id="footer_copyright">&copy; 2026 The Haven. Powered by Net Studio.</p>
     </div>
   </footer>
 
@@ -211,14 +276,39 @@
     if (window.lucide) lucide.createIcons();
 
     /* --- UTILS --- */
+    function normalizeSlug(slug) {
+      if (!slug) return null;
+      return slug.toLowerCase().trim().replace(/^net-studio-/, "");
+    }
+
     function nsGetSlug() {
       const q = new URLSearchParams(location.search).get("b");
-      if (q) return q.toLowerCase();
+      if (q) return q.toLowerCase().trim();
+      
       const h = location.hostname.toLowerCase();
       const R = "netstudiodevelopment.com";
       if (!h || h === "localhost" || h.startsWith("127.") || h === R || h === "www." + R) return null;
       if (h.endsWith("." + R)) return h.slice(0, -(R.length + 1)).split(".")[0];
       return null;
+    }
+
+    function nsGetBParam(){
+      return new URLSearchParams(location.search).get("b");
+    }
+
+    function buildStaffProfileUrl(staffId){
+      const u = new URL("team.html", location.href);
+      u.searchParams.set("staff_id", staffId);
+      const b = nsGetBParam();
+      if (b) u.searchParams.set("b", b);
+      return u.pathname + "?" + u.searchParams.toString();
+    }
+
+    function nsDebugBanner(msg){
+      const d = document.createElement("div");
+      d.style.cssText = "position:fixed;left:12px;right:12px;bottom:12px;z-index:99999;background:#fff;border:1px solid rgba(0,0,0,.15);padding:10px 12px;border-radius:12px;font:12px/1.35 system-ui;color:#111;box-shadow:0 12px 30px rgba(0,0,0,.12)";
+      d.textContent = msg;
+      document.body.appendChild(d);
     }
 
     function nsSetBusinessContext(businessId) {
@@ -251,7 +341,7 @@
       });
     }
 
-    /* --- CONTENT HELPERS --- */
+    /* --- HELPERS --- */
     function setText(id, val){
       const el = document.getElementById(id);
       if (!el) return;
@@ -278,154 +368,148 @@
       el.src = s;
     }
 
-    function pickFirst(obj, keys){
-      if (!obj) return "";
-      for (const k of keys) {
-        const v = obj[k];
-        if (v !== undefined && v !== null && String(v).trim() !== "") return v;
-      }
-      return "";
-    }
-
-    /* --- CANONICAL ABOUT INJECTION --- */
-    function applyAboutCanonicalMonarch(content){
+    /* --- DATA INJECTOR (SMARTER) --- */
+    function applyAboutCanonical(content){
       const about = content?.about || {};
+      const footer = content?.footer || {};
 
-      // HERO
-      const hero = about.hero || {};
-      const heroHeading = pickFirst(hero, ["heading", "title", "h1"]);
-      const heroText    = pickFirst(hero, ["text", "subtitle", "lead", "body", "description"]);
-      const heroImg     = pickFirst(hero, ["image_url", "img", "image", "bg", "bg_url", "photo_url"]);
+      // 1. HERO
+      setText("about_kicker", about.hero?.kicker);
+      setHTML("about_heading", about.hero?.heading);
+      
+      // ✅ PATCH: Look in both places because your DB structure varies
+      // about.hero.text (Standard) OR about.text (Your DB Screenshot)
+      setText("about_text", about.hero?.text || about.text);
+      
+      setImg("about_image", about.hero?.image_url);
 
-      if (heroHeading) setHTML("about_heading", heroHeading);
-      if (heroText) setHTML("bio_text", heroText);
-      if (heroImg) setImg("about_img", heroImg);
+      // 2. STORY SECTION
+      setText("story_kicker", about.story?.kicker);
+      setText("story_title", about.story?.title);
+      setText("story_p1", about.story?.p1);
+      setText("story_p2", about.story?.p2);
 
-      // STORY
-      const story = about.story || {};
-      const storyKicker = pickFirst(story, ["kicker", "tagline", "label"]);
-      const storyTitle  = pickFirst(story, ["title", "heading"]);
-      const storyP1     = pickFirst(story, ["p1", "paragraph_1", "paragraph1", "text_1", "text1"]);
-      const storyP2     = pickFirst(story, ["p2", "paragraph_2", "paragraph2", "text_2", "text2"]);
-
-      if (storyKicker) setText("story_kicker", storyKicker);
-      if (storyTitle)  setText("story_title", storyTitle);
-      if (storyP1)     setText("story_p1", storyP1);
-      if (storyP2)     setText("story_p2", storyP2);
-
-      // SECTION EXTRA
+      // 3. EXTRA SECTION
       const extra = about.section_extra || {};
-      const extraKicker = pickFirst(extra, ["kicker", "tagline", "label"]);
-      const extraTitle  = pickFirst(extra, ["title", "heading"]);
-      const extraP1     = pickFirst(extra, ["p1", "paragraph_1", "paragraph1", "text_1", "text1"]);
-      const extraP2     = pickFirst(extra, ["p2", "paragraph_2", "paragraph2", "text_2", "text2"]);
-      const extraImg    = pickFirst(extra, ["image_url", "img", "image", "bg", "bg_url", "photo_url"]);
+      setText("extra_kicker", extra.kicker);
+      setText("extra_title", extra.title);
+      setText("extra_p1", extra.p1);
+      setText("extra_p2", extra.p2);
+      setImg("extra_image", extra.image_url);
 
-      if (extraKicker) setText("extra_kicker", extraKicker);
-      if (extraTitle)  setText("extra_title", extraTitle);
-      if (extraP1)     setText("extra_p1", extraP1);
-      if (extraP2)     setText("extra_p2", extraP2);
-      if (extraImg)    setImg("extra_img", extraImg);
+      // 4. VALUES GRID
+      (about.values || []).slice(0, 3).forEach((v, i) => {
+        setText(`value_${i+1}_title`, v.title);
+        setText(`value_${i+1}_text`, v.text);
+      });
+
+      // 5. TEAM HEADER
+      setText("team_kicker", about.team_kicker);
+      setText("team_heading", about.team_heading);
+
+      // 6. FOOTER
+      setText("footer_copyright", footer?.copyright);
     }
 
-    /* --- FORMATTERS --- */
-    function formatTime(t) {
-      if(!t) return "";
-      const [h, m] = t.split(":");
-      const H = parseInt(h);
-      const ampm = H >= 12 ? "PM" : "AM";
-      const H12 = H % 12 || 12;
-      return `${H12}:${m} ${ampm}`;
-    }
+    /* --- RENDERERS --- */
+    function renderTeam(members) {
+      const grid = document.getElementById("team_grid");
+      if(!grid) return;
+      
+      if(!members || members.length === 0) {
+        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#999;">No active artisans found.</div>`;
+        return;
+      }
 
-    const SORTER = { "sunday":0, "monday":1, "tuesday":2, "wednesday":3, "thursday":4, "friday":5, "saturday":6 };
-    const DAYS = { "sunday":"Sun", "monday":"Mon", "tuesday":"Tue", "wednesday":"Wed", "thursday":"Thu", "friday":"Fri", "saturday":"Sat" };
+      grid.innerHTML = members.map(m => {
+        const fullName = (m?.name || "").trim() || "Team Member";
+        const firstName = fullName.split(/\s+/)[0] || fullName;
+        
+        return `
+        <div class="team-card">
+          <div class="team-img-wrap">
+            <img src="${m.profile_image_url || 'https://via.placeholder.com/400'}" class="team-img" alt="${fullName}">
+          </div>
+          <h3 style="font-size: 18px;">${firstName}</h3>
+          <span class="team-role">${m.role || "Artisan"}</span>
+          <div class="action-row">
+            <button class="btn-sm" onclick="window.nsOpenBooking({ staff_id: '${m.id}' }); return false;">Book</button>
+            <button class="btn-outline-sm" onclick="window.location.href='${buildStaffProfileUrl(m.id)}'; return false;">Profile</button>
+          </div>
+        </div>
+      `}).join("");
+    }
 
     /* --- MAIN LOAD --- */
     const SB_URL = "https://jdvdgvolfmvlgyfklbwe.supabase.co";
     const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpkdmRndm9sZm12bGd5ZmtsYndlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM1Mjk5MDgsImV4cCI6MjA3OTEwNTkwOH0.xiAOgWof9En3jbCpY1vrYpj3HD-O6jMHbamIHTSflek";
     const sb = supabase.createClient(SB_URL, SB_KEY);
-    const SLUG = nsGetSlug();
+    const SLUG = normalizeSlug(nsGetSlug());
 
-    async function loadMonarchAbout() {
-      if (!SLUG) return;
+    async function loadHavenAbout() {
+      if (!SLUG) { 
+        nsDebugBanner("No SLUG detected. Use ?b=your-slug or a slug subdomain."); 
+        return; 
+      }
 
-      // 1. Business Info (Only ID/Branding/Address)
-      // Removed 'bio' from select
-      const { data: biz } = await sb.from("business")
+      const { data: biz, error: bizErr } = await sb.from("business")
         .select("id, name, street_address, city, state")
         .eq("slug", SLUG).maybeSingle();
       
-      if (!biz) return;
+      if (bizErr) console.error(bizErr);
+      if (!biz) { 
+        nsDebugBanner(`No business found for slug: ${SLUG}`); 
+        return; 
+      }
 
-      // Context & Engine
       nsSetBusinessContext(biz.id);
       await nsLoadBookingEngine();
 
-      // Branding
       if (biz.name) {
-        const n = biz.name.toUpperCase();
-        if(document.getElementById("nav_logo")) document.getElementById("nav_logo").textContent = n;
-        if(document.getElementById("footer_logo")) document.getElementById("footer_logo").textContent = n;
-        if(document.getElementById("footer_copy")) document.getElementById("footer_copy").textContent = `© ${new Date().getFullYear()} ${biz.name}. Powered by Net Studio.`;
+        if(document.getElementById("nav_logo")) document.getElementById("nav_logo").textContent = biz.name;
+        if(document.getElementById("footer_logo")) document.getElementById("footer_logo").textContent = biz.name;
       }
 
-      // Address & Map
-      const address = [biz.street_address, biz.city, biz.state].filter(Boolean).join(", ");
-      if(document.getElementById("contact_address")) {
-        document.getElementById("contact_address").innerHTML = address.replace(", ", "<br>");
+      const addrEl = document.getElementById("ns_address");
+      if (addrEl) {
+        const line1 = (biz.street_address || "").trim();
+        const line2 = [biz.city, biz.state].map(v => (v || "").trim()).filter(Boolean).join(", ");
+        const html = [line1, line2].filter(Boolean).join("<br>");
+        if (html) addrEl.innerHTML = html;
       }
 
-      if (address) {
-        const q = encodeURIComponent(address);
-        document.getElementById("map_frame").src = `http://googleusercontent.com/maps.google.com/maps?q=${q}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
-      }
-
-      // 2) Follow pointer (business_sites_one) -> active template
-      let activeKey = "monarch_v1";
-      const { data: one, error: oneErr } = await sb
-        .from("business_sites_one")
-        .select("active_template_key")
-        .eq("business_id", biz.id)
-        .maybeSingle();
-
-      if (oneErr) console.error(oneErr);
-      if (one?.active_template_key) activeKey = one.active_template_key.trim();
-
-      // 3) Fetch active site row content
-      const { data: site, error: siteErr } = await sb
+      // ✅ PATCH: FETCH ALL SITES & FIND THE ONE WITH 'about' DATA
+      // This bypasses the mismatched template_key issue entirely.
+      const { data: sites, error: sitesErr } = await sb
         .from("business_sites")
         .select("template_key, content_json")
-        .eq("business_id", biz.id)
-        .eq("template_key", activeKey)
-        .maybeSingle();
-
-      if (siteErr) console.error(siteErr);
-
-      // ✅ Content_json ONLY injection
-      if (site?.content_json) {
-        applyAboutCanonicalMonarch(site.content_json);
-      }
-
-      // 4. Fetch Hours
-      const { data: hours } = await sb.from("business_hours")
-        .select("day_of_week, open_time, close_time, is_closed")
         .eq("business_id", biz.id);
 
-      const hoursEl = document.getElementById("contact_hours");
-      if (hours && hours.length > 0) {
-        hours.sort((a, b) => SORTER[a.day_of_week] - SORTER[b.day_of_week]);
-        let html = "";
-        hours.forEach(h => {
-          const dayName = DAYS[h.day_of_week];
-          const timeStr = h.is_closed ? "Closed" : `${formatTime(h.open_time)} - ${formatTime(h.close_time)}`;
-          html += `${dayName}: ${timeStr}<br>`;
-        });
-        hoursEl.innerHTML = html;
+      if (sitesErr) console.error(sitesErr);
+      
+      // Look for ANY row that has an 'about' key in content_json
+      const site = (sites || []).find(s => s.content_json?.about);
+
+      nsDebugBanner(`Sites found: ${sites?.length || 0} | Matched Key: ${site?.template_key || "NONE"}`);
+
+      if (!site?.content_json) {
+        nsDebugBanner(`No site data found with 'about' content. Check DB rows.`);
+        return;
       }
+
+      // Apply content
+      applyAboutCanonical(site.content_json);
+
+      // Fetch Team
+      const { data: members } = await sb.from("team_members")
+        .select("id, name, role, profile_image_url")
+        .eq("business_id", biz.id)
+        .eq("is_active", true);
+
+      renderTeam(members || []);
     }
 
-    loadMonarchAbout();
+    loadHavenAbout();
   </script>
 </body>
 </html>
