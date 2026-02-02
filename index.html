@@ -182,6 +182,7 @@
     (() => {
       const $ = (id) => document.getElementById(id);
       const pick = (...vals) => vals.find(v => v !== undefined && v !== null && String(v).trim() !== "") || "";
+      const BLANK_IMG = "data:image/gif;base64,R0lGODlhAQABAAAAACw="; // ✅ Fix 3: Image fallback
 
       function nsDetectSlugProdOnly() {
         const ROOT = "netstudiodevelopment.com";
@@ -200,7 +201,6 @@
         FALLBACK_TEMPLATE: "monarch_v1"
       };
 
-      // PATCH 2: True 404 Isolation
       function show404(){
         const e = document.getElementById("site-error");
         const m = document.getElementById("main-content");
@@ -225,14 +225,18 @@
       function apply(data, biz) {
         const home = data.home || {};
         const hero = home.hero || {};
-        const services = home.services || {}; // Standardized services
-        const features = home.features || {}; // Standardized features/why
+        const services = home.services || {}; 
+        const features = home.features || {}; 
         const extra = home.section_extra || {};
 
         const bName = (biz.name || "MONARCH").toUpperCase();
         if ($("nav_logo")) $("nav_logo").textContent = bName;
         if ($("footer_logo")) $("footer_logo").textContent = bName;
-        if ($("footer_copy")) $("footer_copy").textContent = `© ${new Date().getFullYear()} ${biz.name}. Powered by Net Studio.`;
+        
+        // ✅ Fix 2: Footer copy undefined check
+        if ($("footer_copy")) {
+          $("footer_copy").textContent = `© ${new Date().getFullYear()} ${pick(biz.name, bName)}. Powered by Net Studio.`;
+        }
 
         const hBg = pick(hero.bg, hero.bg_image, biz.hero_bg_url, "https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&q=80&w=2000");
         if ($("ns_hero")) $("ns_hero").style.backgroundImage = `linear-gradient(to right, rgba(0,0,0,0.8), rgba(0,0,0,0.4)), url('${hBg}')`;
@@ -244,14 +248,12 @@
         if ($("services_kicker")) $("services_kicker").textContent = pick(services.kicker, "What We Do");
         if ($("services_title")) $("services_title").textContent = pick(services.title, "Precision Grooming");
         
-        // CLEAN HEADER: No text if DB is empty
         if ($("squad_kicker")) $("squad_kicker").textContent = pick(extra.kicker, "");
         if ($("squad_title")) $("squad_title").textContent = pick(extra.headline, "");
 
         if ($("why_kicker")) $("why_kicker").textContent = pick(features.kicker, "Why Monarch");
         if ($("why_title")) $("why_title").textContent = pick(features.title, "The Top Choice");
 
-        // ✅ PATCH 1: Strict Loading for Features (No Fakes)
         const whyItems = Array.isArray(features.items) ? features.items : null;
         if ($("why_items")) {
           if (!whyItems || whyItems.length === 0) {
@@ -274,8 +276,10 @@
         if ($("biz_address")) $("biz_address").textContent = address;
         if ($("biz_phone")) $("biz_phone").textContent = biz.phone || "";
         
-        // ✅ PATCH 3: HTTPS for Maps
-        if ($("map_frame")) $("map_frame").src = `https://googleusercontent.com/maps.google.com/0{encodeURIComponent(address)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+        // ✅ Fix 1: Map URL construction
+        if ($("map_frame")) {
+          $("map_frame").src = `https://maps.google.com/maps?q=${encodeURIComponent(address)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+        }
 
         if (window.lucide) lucide.createIcons();
       }
@@ -289,30 +293,33 @@
         window.NS_BUSINESS_ID = biz.id;
         document.documentElement.setAttribute("data-ns-business-id", String(biz.id));
 
-        // IDENTITY LOCK: Fetch Pointer
         const { data: pointer } = await sb.from("business_sites_one").select("active_template_key").eq("business_id", biz.id).maybeSingle();
         const activeKey = pointer?.active_template_key || NS.FALLBACK_TEMPLATE;
 
-        nsLoadBookingEngine(); // Non-blocking
+        nsLoadBookingEngine();
 
         const [siteRes, teamRes] = await Promise.all([
           sb.from("business_sites").select("content_json").eq("business_id", biz.id).eq("template_key", activeKey).maybeSingle(),
           sb.from("team_members").select("*").eq("business_id", biz.id).eq("is_active", true).not("auth_user_id", "is", null)
         ]);
 
-        // ✅ PATCH 2: Strict Loading for Team (No Fakes)
         const team = Array.isArray(teamRes.data) ? teamRes.data : [];
         if ($("team_scroll")) {
           if (team.length === 0) {
             $("team_scroll").innerHTML = `<div style="color:var(--text-muted); font-size:13px; width:100%; text-align:center;">Loading...</div>`;
           } else {
-            $("team_scroll").innerHTML = team.map(m => `
+            // ✅ Fix 3: Image fallback logic
+            $("team_scroll").innerHTML = team.map(m => {
+              const img = pick(m.profile_image_url, BLANK_IMG);
+              const role = pick(m.role, "");
+              return `
               <div class="squad-card" onclick="window.location.href='team.html?b=${NS.SLUG}'">
-                <img src="${m.profile_image_url || ''}" class="squad-img">
+                <img src="${img}" class="squad-img" alt="${pick(m.name, "")}">
                 <div style="font-weight:700; font-size:14px;">${pick(m.name, "")}</div>
-                <div class="handle">@${pick(m.role, "").toUpperCase()}</div>
+                ${role ? `<div class="handle">@${role.toUpperCase()}</div>` : ``}
               </div>
-            `).join("");
+            `;
+            }).join("");
           }
         }
 
