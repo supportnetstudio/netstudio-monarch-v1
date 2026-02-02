@@ -35,6 +35,7 @@
       line-height: 1.5;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
+      scroll-behavior: smooth;
     }
 
     h1 { font-size: clamp(40px, 8vw, 64px); font-weight: 900; line-height: 0.95; letter-spacing: -0.04em; text-transform: uppercase; margin-bottom: 24px; }
@@ -43,6 +44,7 @@
 
     .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
     .section-pad { padding: 80px 0; }
+    
     .btn {
       display: inline-flex; background: var(--accent); color: white;
       padding: 14px 28px; font-weight: 700; text-transform: uppercase; font-size: 12px;
@@ -53,16 +55,50 @@
     .btn.outline { background: transparent; border: 1px solid var(--border); }
     .btn.outline:hover { border-color: white; }
 
-    nav {
-      position: absolute; top: 0; width: 100%; padding: 30px 24px; z-index: 50;
-      display: flex; justify-content: space-between; align-items: center;
+    /* --- NEW MUSE HEADER SYSTEM --- */
+    .ns-header {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      padding: 26px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      z-index: 50;
     }
+
+    .ns-header-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .ns-box {
+      padding: 10px 14px;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      text-decoration: none;
+      background: transparent;
+      transition: 0.2s ease;
+    }
+
+    .ns-box:hover, .ns-box.active {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
     .brand { font-weight: 900; font-size: 20px; letter-spacing: -0.05em; font-style: italic; }
     
-    /* --- HERO (PATCHED: NO IMAGE) --- */
+    /* --- HERO --- */
     .hero {
       min-height: 85vh; display: flex; align-items: center;
       border-bottom: 1px solid var(--border);
+      background: radial-gradient(circle at 10% 50%, rgba(239, 68, 68, 0.05) 0%, transparent 50%);
     }
     .hero-content { max-width: 600px; }
 
@@ -83,6 +119,19 @@
     
     footer { border-top: 1px solid var(--border); padding: 40px 0; text-align: center; color: var(--text-muted); font-size: 12px; }
     
+    /* Mobile: boxes wrap clean */
+    @media (max-width: 768px) {
+      .ns-header { flex-wrap: wrap; }
+      .ns-header-actions {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+        margin-top: 12px;
+        flex-wrap: wrap;
+      }
+      .hero { padding-top: 100px; }
+    }
+
     #site-error { display: none; text-align: center; padding: 100px 20px; color: #666; font-size: 14px; }
   </style>
 </head>
@@ -94,9 +143,20 @@
   </div>
 
   <div id="main-content">
-    <nav>
-      <div class="brand" id="nav_logo">MONARCH</div>
-      <a href="#book" class="btn" style="padding: 10px 20px; font-size: 11px;" onclick="window.nsOpenBooking(); return false;">Book Now</a>
+    <nav class="ns-header">
+      <div class="brand" id="nav_logo">BARBERSHOP</div>
+
+      <div class="ns-header-actions">
+        <a href="index.html" class="ns-box active">Home</a>
+        <a href="about.html" class="ns-box">About</a>
+        <a href="gallery.html" class="ns-box">Gallery</a>
+        <a href="team.html" class="ns-box">Team</a>
+        <a href="contact.html" class="ns-box">Contact</a>
+      </div>
+
+      <a href="#book" class="btn" style="padding:10px 20px; font-size:11px;" onclick="window.nsOpenBooking(); return false;">
+        Book Now
+      </a>
     </nav>
 
     <header class="hero" id="ns_hero">
@@ -142,8 +202,7 @@
       <div class="container">
         <span class="tagline" id="squad_kicker"></span>
         <h2 id="squad_title" style="margin-bottom:40px;"></h2>
-        <div class="squad-scroll" id="team_scroll">
-           </div>
+        <div class="squad-scroll" id="team_scroll"></div>
       </div>
     </section>
 
@@ -152,8 +211,7 @@
         <div>
           <span class="tagline" id="why_kicker"></span>
           <h2 id="why_title" style="margin-bottom:40px;"></h2>
-          <div id="why_items">
-             </div>
+          <div id="why_items"></div>
         </div>
         <div>
           <span class="tagline">Visit Us</span>
@@ -236,8 +294,6 @@
         if ($("footer_copy")) {
           $("footer_copy").textContent = `© ${new Date().getFullYear()} ${pick(biz.name, bName)}. Powered by Net Studio.`;
         }
-
-        // PATCHED: Hero background image logic removed here.
         
         if ($("hero_kicker")) $("hero_kicker").textContent = pick(hero.kicker, "Norfolk's Premier Studio");
         if ($("hero_headline")) $("hero_headline").innerHTML = pick(hero.headline, "Premium Cuts.<br>Fair Prices.");
@@ -246,8 +302,8 @@
         if ($("services_kicker")) $("services_kicker").textContent = pick(services.kicker, "What We Do");
         if ($("services_title")) $("services_title").textContent = pick(services.title, "Precision Grooming");
         
-        if ($("squad_kicker")) $("squad_kicker").textContent = pick(extra.kicker, "");
-        if ($("squad_title")) $("squad_title").textContent = pick(extra.headline, "");
+        if ($("squad_kicker")) $("squad_kicker").textContent = pick(extra.kicker, "Our Team");
+        if ($("squad_title")) $("squad_title").textContent = pick(extra.headline, "The Monarch Squad");
 
         if ($("why_kicker")) $("why_kicker").textContent = pick(features.kicker, "Why Monarch");
         if ($("why_title")) $("why_title").textContent = pick(features.title, "The Top Choice");
@@ -310,17 +366,13 @@
               const role = pick(m.role, "");
               return `
               <div class="squad-card" onclick="window.location.href='team.html?b=${NS.SLUG}'">
-                <img src="${img}" class="squad-img" alt="${pick(m.name, "")}">
+                <img src="${img}" class="squad-img" alt="${pick(m.name, "Barber")}">
                 <div style="font-weight:700; font-size:14px;">${pick(m.name, "")}</div>
                 ${role ? `<div class="handle">@${role.toUpperCase()}</div>` : ``}
               </div>
             `;
             }).join("");
           }
-        }
-
-        if (!siteRes.data) {
-          console.warn(`[NetStudio] Missing business_sites row: template=${activeKey}, business_id=${biz.id}`);
         }
 
         apply(siteRes.data?.content_json || {}, biz);
